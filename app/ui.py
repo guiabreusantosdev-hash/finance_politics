@@ -24,7 +24,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     from app.config_loader import carregar_indicadores, carregar_mandatos
     from app.db import conectar, criar_schema, observacoes_da_serie
     from app.llm import ClaudeCodeClient
-    from app.payload import construir_payload_ano, construir_payload_comparacao
+    from app.payload import construir_payload_ano, construir_payload_comparacao, construir_payload_mandato
 
     st.set_page_config(page_title="finance_politics", layout="wide")
     indicadores = carregar_indicadores()
@@ -47,7 +47,18 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
 
     with aba_mandato:
         nome = st.selectbox("Mandato", [m.nome for m in mandatos])
-        st.write(f"Mandato selecionado: {nome}")
+        mandato_sel = next(m for m in mandatos if m.nome == nome)
+        payload_m = construir_payload_mandato(conn, indicadores, mandato_sel)
+        for ind in indicadores:
+            obs = observacoes_da_serie(conn, ind.id)
+            if obs:
+                st.plotly_chart(
+                    grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
+                    use_container_width=True,
+                )
+        st.dataframe(pd.DataFrame([v.model_dump() for v in payload_m.indicadores]))
+        if st.button("Gerar resumo do mandato"):
+            _mostrar_resumo(st, ClaudeCodeClient(), payload_m)
 
     with aba_comp:
         nomes = [m.nome for m in mandatos]
@@ -63,6 +74,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
 
 
 def _mostrar_resumo(st, client, payload) -> None:  # pragma: no cover
+    from app.judge import julgar
     from app.resumo import gerar_resumo
 
     try:
@@ -70,5 +82,14 @@ def _mostrar_resumo(st, client, payload) -> None:  # pragma: no cover
         st.info("Resumo gerado por IA a partir dos dados acima:")
         for eixo, txt in resumo.paragrafos_por_eixo.items():
             st.markdown(f"**{eixo}** — {txt}")
+        try:
+            veredito = julgar(client, payload, resumo)
+            if not veredito.ancorado or not veredito.neutro:
+                aviso = f"⚠️ O juiz de IA detectou problemas no resumo: {veredito.observacoes}"
+                if veredito.numeros_fora_do_payload:
+                    aviso += f" Números fora do payload: {veredito.numeros_fora_do_payload}"
+                st.warning(aviso)
+        except Exception:
+            pass  # judge failure is non-fatal; summary is still shown
     except ValueError as exc:
         st.error(f"Não foi possível gerar o resumo: {exc}")

@@ -5,7 +5,7 @@ import json
 
 from app.guard import GuardError, verificar
 from app.llm import LLMClient
-from app.models import PayloadAno, PayloadComparacao, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadMandato, ResumoFactual
 
 _REGRAS = (
     "Você redige um resumo FACTUAL e NEUTRO sobre indicadores de um governo. "
@@ -18,12 +18,14 @@ _REGRAS = (
 )
 
 
-def montar_prompt(payload: PayloadAno | PayloadComparacao) -> str:
+def montar_prompt(payload: PayloadAno | PayloadComparacao | PayloadMandato) -> str:
     return f"{_REGRAS}\n\nPAYLOAD:\n{payload.model_dump_json(indent=2)}"
 
 
 def gerar_resumo(
-    client: LLMClient, payload: PayloadAno | PayloadComparacao, tentativas: int = 3
+    client: LLMClient,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato,
+    tentativas: int = 3,
 ) -> ResumoFactual:
     prompt = montar_prompt(payload)
     erro: Exception | None = None

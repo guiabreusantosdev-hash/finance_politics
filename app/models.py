@@ -67,6 +67,23 @@ class PayloadComparacao(BaseModel):
     deltas: list[DeltaIndicador]
 
 
+class ValorIndicadorMandato(BaseModel):
+    nome: str
+    valor_inicio: float | None
+    valor_fim: float | None
+    variacao: float | None
+    unidade: str
+    fonte: str
+
+
+class PayloadMandato(BaseModel):
+    mandato: str
+    ano_inicio: int
+    ano_fim: int
+    indicadores: list[ValorIndicadorMandato]
+    faltantes: list[str]
+
+
 class Afirmacao(BaseModel):
     texto: str
     valor_citado: float

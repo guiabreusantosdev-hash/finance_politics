@@ -6,8 +6,10 @@ from app.models import (
     DeltaIndicador,
     PayloadAno,
     PayloadComparacao,
+    PayloadMandato,
     ResumoFactual,
     ValorIndicador,
+    ValorIndicadorMandato,
 )
 
 
@@ -127,3 +129,67 @@ def test_hallucinated_value_still_raises_with_small_int_fix():
     )
     with pytest.raises(GuardError):
         verificar(resumo, _payload())
+
+
+# --- I3: PayloadMandato in guard ---
+
+def _payload_mandato() -> PayloadMandato:
+    return PayloadMandato(
+        mandato="Dilma 1",
+        ano_inicio=2011,
+        ano_fim=2014,
+        indicadores=[
+            ValorIndicadorMandato(
+                nome="Meta Selic",
+                valor_inicio=11.75,
+                valor_fim=10.9,
+                variacao=-7.23,
+                unidade="% a.a.",
+                fonte="BCB",
+            )
+        ],
+        faltantes=[],
+    )
+
+
+def test_mandato_anos_em_permitidos():
+    """Mandate years must appear in numeros_permitidos for PayloadMandato."""
+    p = _payload_mandato()
+    permitidos = numeros_permitidos(p)
+    assert 2011.0 in permitidos
+    assert 2014.0 in permitidos
+
+
+def test_mandato_valores_em_permitidos():
+    """Indicator values (inicio, fim, variacao) must be in numeros_permitidos."""
+    p = _payload_mandato()
+    permitidos = numeros_permitidos(p)
+    assert 11.75 in permitidos
+    assert 10.9 in permitidos
+    assert -7.23 in permitidos
+
+
+def test_resumo_mandato_fiel_passa():
+    """A mandate summary citing only payload numbers must not raise."""
+    p = _payload_mandato()
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={
+            "macro": "No mandato Dilma 1 (2011-2014) a Selic caiu de 11,75% para 10,9%."
+        },
+        afirmacoes=[
+            Afirmacao(texto="Selic início", valor_citado=11.75, fonte="BCB"),
+            Afirmacao(texto="Selic fim", valor_citado=10.9, fonte="BCB"),
+        ],
+    )
+    verificar(resumo, p)  # must not raise
+
+
+def test_resumo_mandato_alucinado_falha():
+    """A mandate summary with an invented number must raise GuardError."""
+    p = _payload_mandato()
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"macro": "A Selic estava em 15,00% no mandato."},
+        afirmacoes=[],
+    )
+    with pytest.raises(GuardError):
+        verificar(resumo, p)

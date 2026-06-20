@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-from app.models import PayloadAno, PayloadComparacao, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadMandato, ResumoFactual
 
 _NUM = re.compile(r"(?<![.\d])-?\d+(?:[.\s]\d{3})*(?:[.,]\d+)?")
 
@@ -25,7 +25,7 @@ def extrair_numeros(texto: str) -> list[float]:
     return out
 
 
-def numeros_permitidos(payload: PayloadAno | PayloadComparacao) -> set[float]:
+def numeros_permitidos(payload: PayloadAno | PayloadComparacao | PayloadMandato) -> set[float]:
     # Small ordinals/counts/quarters are always permitted (never plausible hallucinated values).
     # Range 0-8: covers typical ordinals, counts, quarters (1-4), avoiding plausible % values.
     nums: set[float] = set(float(i) for i in range(9))
@@ -34,6 +34,13 @@ def numeros_permitidos(payload: PayloadAno | PayloadComparacao) -> set[float]:
         for vi in payload.indicadores:
             if vi.valor is not None:
                 nums.add(vi.valor)
+    elif isinstance(payload, PayloadMandato):
+        nums.add(float(payload.ano_inicio))
+        nums.add(float(payload.ano_fim))
+        for vi in payload.indicadores:
+            for v in (vi.valor_inicio, vi.valor_fim, vi.variacao):
+                if v is not None:
+                    nums.add(v)
     else:
         nums.add(float(payload.ano_inicio_a))
         nums.add(float(payload.ano_fim_a))
@@ -51,7 +58,9 @@ def _proximo(alvo: float, permitidos: set[float], tol: float) -> bool:
 
 
 def verificar(
-    resumo: ResumoFactual, payload: PayloadAno | PayloadComparacao, tolerancia: float = 0.05
+    resumo: ResumoFactual,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato,
+    tolerancia: float = 0.05,
 ) -> None:
     permitidos = numeros_permitidos(payload)
     for af in resumo.afirmacoes:

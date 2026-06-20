@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import datetime
 
-from app.calculo import valor_no_mandato, valor_no_periodo
+from app.calculo import valor_no_mandato, valor_no_periodo, variacao
 from app.db import observacoes_da_serie
 from app.models import (
     DeltaIndicador,
@@ -11,7 +11,9 @@ from app.models import (
     Mandato,
     PayloadAno,
     PayloadComparacao,
+    PayloadMandato,
     ValorIndicador,
+    ValorIndicadorMandato,
 )
 
 
@@ -33,6 +35,35 @@ def construir_payload_ano(conn, indicadores: list[Indicador], ano: int) -> Paylo
             data_ref=_data_ref_do_ano(obs, ano),
         ))
     return PayloadAno(ano=ano, indicadores=valores, faltantes=faltantes)
+
+
+def construir_payload_mandato(
+    conn, indicadores: list[Indicador], mandato: Mandato
+) -> PayloadMandato:
+    valores: list[ValorIndicadorMandato] = []
+    faltantes: list[str] = []
+    for ind in indicadores:
+        obs = observacoes_da_serie(conn, ind.id)
+        v_inicio = valor_no_mandato(obs, ind, mandato, "inicio")
+        v_fim = valor_no_mandato(obs, ind, mandato, "fim")
+        var = variacao(v_inicio, v_fim)
+        if v_inicio is None and v_fim is None:
+            faltantes.append(ind.nome)
+        valores.append(ValorIndicadorMandato(
+            nome=ind.nome,
+            valor_inicio=v_inicio,
+            valor_fim=v_fim,
+            variacao=var,
+            unidade=ind.unidade,
+            fonte=ind.fonte,
+        ))
+    return PayloadMandato(
+        mandato=mandato.nome,
+        ano_inicio=mandato.inicio.year,
+        ano_fim=mandato.fim.year,
+        indicadores=valores,
+        faltantes=faltantes,
+    )
 
 
 def construir_payload_comparacao(
