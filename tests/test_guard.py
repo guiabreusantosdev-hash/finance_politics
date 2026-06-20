@@ -1,6 +1,6 @@
 import pytest
 
-from app.guard import GuardError, extrair_numeros, numeros_permitidos, verificar
+from app.guard import GuardError, extrair_numeros, numeros_permitidos, verificar, _extrair_numeros_com_tipo
 from app.models import (
     Afirmacao,
     DeltaIndicador,
@@ -107,22 +107,79 @@ def test_resumo_comparacao_com_anos_passa():
     verificar(resumo, p)  # must not raise
 
 
-# --- I1: small integers (0-12) must always be permitted ---
+# --- Rate-like vs bare-integer free-text enforcement ---
 
-def test_small_integers_always_permitted():
-    """Ordinals/counts 0-12 must not cause GuardError even if not in payload."""
+def test_bare_integers_in_prose_pass():
+    """Bare integers (no decimal, no %) are not rate-like and pass freely."""
     resumo = ResumoFactual(
         paragrafos_por_eixo={
-            "macro": "Lula 1 governou por 1 mandato com 3 eixos principais no 1º trimestre."
+            "macro": "No 1º mandato os 3 eixos melhoraram; em 2024 a Selic foi de 11,75%."
         },
-        afirmacoes=[],
+        afirmacoes=[Afirmacao(texto="Selic 11,75%", valor_citado=11.75, fonte="BCB")],
     )
-    # Payload has only Selic 11.75 and year 2024 — small ints 1, 3 are not in payload values
+    # 1, 3, 2024 are bare integers → ignored; 11,75 is decimal → enforced but is in payload
     verificar(resumo, _payload())  # must not raise
 
 
-def test_hallucinated_value_still_raises_with_small_int_fix():
-    """Small int fix must NOT allow real hallucinated indicator values (e.g. 9.0)."""
+def test_decimal_hallucination_raises():
+    """A decimal number not in payload triggers GuardError."""
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"macro": "A Selic foi de 9,30%."},
+        afirmacoes=[],
+    )
+    with pytest.raises(GuardError):
+        verificar(resumo, _payload())
+
+
+def test_percent_suffixed_integer_hallucination_raises():
+    """A bare integer immediately followed by % is rate-like and enforced."""
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"macro": "A Selic foi de 8%."},
+        afirmacoes=[],
+    )
+    with pytest.raises(GuardError):
+        verificar(resumo, _payload())
+
+
+def test_bare_integer_not_in_payload_passes():
+    """A bare integer not present in payload passes (not rate-like)."""
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"macro": "os 5 indicadores foram analisados."},
+        afirmacoes=[],
+    )
+    verificar(resumo, _payload())  # must not raise
+
+
+def test_structured_strictness_restored():
+    """valor_citado=8.0 must raise when payload only has Selic=11.75 (no 0-8 allowlist)."""
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"macro": "texto sem números relevantes"},
+        afirmacoes=[Afirmacao(texto="Selic", valor_citado=8.0, fonte="BCB")],
+    )
+    with pytest.raises(GuardError):
+        verificar(resumo, _payload())
+
+
+def test_is_rate_like_decimal():
+    """_extrair_numeros_com_tipo marks decimal numbers as rate-like."""
+    results = dict(_extrair_numeros_com_tipo("valor de 11,75 por cento"))
+    assert results[11.75] is True
+
+
+def test_is_rate_like_percent_suffix():
+    """_extrair_numeros_com_tipo marks %-suffixed integers as rate-like."""
+    results = dict(_extrair_numeros_com_tipo("cresceu 8%"))
+    assert results[8.0] is True
+
+
+def test_is_not_rate_like_bare_integer():
+    """_extrair_numeros_com_tipo marks bare integers as NOT rate-like."""
+    results = dict(_extrair_numeros_com_tipo("os 3 eixos"))
+    assert results[3.0] is False
+
+
+def test_hallucinated_value_still_raises():
+    """Decimal hallucination in prose must still raise GuardError."""
     resumo = ResumoFactual(
         paragrafos_por_eixo={"macro": "A Selic foi de 9,00% no período."},
         afirmacoes=[],

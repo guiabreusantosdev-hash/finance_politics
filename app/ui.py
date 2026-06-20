@@ -4,7 +4,7 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from app.models import Observacao
+from app.models import Observacao, PayloadAno, PayloadComparacao, PayloadMandato
 
 
 def serie_para_df(obs: list[Observacao]) -> pd.DataFrame:
@@ -73,7 +73,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             _mostrar_resumo(st, ClaudeCodeClient(), payload_c)
 
 
-def _mostrar_resumo(st, client, payload) -> None:  # pragma: no cover
+def _mostrar_resumo(st, client, payload: PayloadAno | PayloadComparacao | PayloadMandato) -> None:  # pragma: no cover
     from app.judge import julgar
     from app.resumo import gerar_resumo
 
