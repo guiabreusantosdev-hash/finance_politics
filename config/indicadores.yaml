@@ -1,0 +1,65 @@
+# id, fonte, codigo_fonte, nome, unidade, periodicidade, eixo, metodo_anual
+- id: bcb_432_selic
+  fonte: BCB
+  codigo_fonte: "432"
+  nome: Meta Selic
+  unidade: "% a.a."
+  periodicidade: mensal
+  eixo: macro
+  metodo_anual: fim_periodo
+- id: bcb_433_ipca
+  fonte: BCB
+  codigo_fonte: "433"
+  nome: IPCA
+  unidade: "% (12m)"
+  periodicidade: mensal
+  eixo: macro
+  metodo_anual: acumulado_12m
+- id: bcb_1_cambio
+  fonte: BCB
+  codigo_fonte: "1"
+  nome: Câmbio R$/US$ (venda)
+  unidade: R$/US$
+  periodicidade: diaria
+  eixo: macro
+  metodo_anual: fim_periodo
+- id: sidra_6468_desemprego
+  fonte: IBGE
+  codigo_fonte: "6468"
+  nome: Taxa de desocupação (PNAD)
+  unidade: "%"
+  periodicidade: trimestral
+  eixo: macro
+  metodo_anual: media
+- id: ipea_pib_real_var
+  fonte: IPEA
+  codigo_fonte: "PIB_real_var"
+  nome: PIB real (variação anual)
+  unidade: "%"
+  periodicidade: anual
+  eixo: macro
+  metodo_anual: fim_periodo
+- id: bcb_13762_dbgg
+  fonte: BCB
+  codigo_fonte: "13762"
+  nome: Dívida Bruta do Governo Geral (% PIB)
+  unidade: "% do PIB"
+  periodicidade: mensal
+  eixo: fiscal
+  metodo_anual: fim_periodo
+- id: bcb_5793_primario
+  fonte: BCB
+  codigo_fonte: "5793"
+  nome: Resultado primário (% PIB, 12m)
+  unidade: "% do PIB"
+  periodicidade: mensal
+  eixo: fiscal
+  metodo_anual: fim_periodo
+- id: ipea_gini
+  fonte: IPEA
+  codigo_fonte: "GINI"
+  nome: Índice de Gini
+  unidade: índice
+  periodicidade: anual
+  eixo: social
+  metodo_anual: fim_periodo

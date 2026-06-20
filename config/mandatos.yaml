@@ -1,0 +1,18 @@
+- nome: Lula 1
+  inicio: 2003-01-01
+  fim: 2006-12-31
+- nome: Lula 2
+  inicio: 2007-01-01
+  fim: 2010-12-31
+- nome: Dilma 1
+  inicio: 2011-01-01
+  fim: 2014-12-31
+- nome: Dilma/Temer
+  inicio: 2015-01-01
+  fim: 2018-12-31
+- nome: Bolsonaro
+  inicio: 2019-01-01
+  fim: 2022-12-31
+- nome: Lula 3
+  inicio: 2023-01-01
+  fim: 2026-12-31
