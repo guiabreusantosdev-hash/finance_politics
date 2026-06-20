@@ -1,26 +1,32 @@
 # AGENTS.md — guia operacional (carregado TODO loop, mantenha < ~60 linhas)
 
 > Este é o "coração do loop": COMO buildar/rodar/testar, não um diário de progresso.
-> É aqui que a backpressure fica específica do projeto. Edite os comandos abaixo
-> para os REAIS do seu projeto antes do primeiro `./loop.sh build`.
 
 ## Projeto
-- Nome: <preencha>
-- Stack: <ex.: Python 3.12 + pytest + ruff>  /  <ex.: Node 20 + vitest + tsc>
-- Fonte da verdade do QUE construir: `specs/*.md`
-- Rastreador de tarefas: `IMPLEMENTATION_PLAN.md`
+- Nome: finance_politics — ferramenta pessoal de análise da performance de governos (BR)
+- Stack: Python 3.12 + uv + pytest + ruff + pyright + streamlit + plotly
+- Dados: SQLite (long format). Fontes: BCB, IBGE/SIDRA, IPEA, Tesouro
+- IA: assinatura do Claude Code (Agent SDK / `claude -p`) atrás da interface `LLMClient`
+- Fonte da verdade do QUE construir: `specs/*.md` (ativa: `specs/2026-06-20-nucleo-economico.md`)
+- Plano de tarefas detalhado: `docs/superpowers/plans/2026-06-20-nucleo-economico.md`
+- Rastreador de progresso: `IMPLEMENTATION_PLAN.md`
 
-## Comandos (backpressure) — ajuste para o seu projeto
-- Instalar deps:   `<ex.: uv sync>`  /  `<ex.: npm ci>`
-- Rodar testes:    `<ex.: pytest -q>`  /  `<ex.: npm test>`
-- Typecheck:       `<ex.: pyright>`  /  `<ex.: npx tsc --noEmit>`
-- Lint:            `<ex.: ruff check .>`  /  `<ex.: npm run lint>`
-- Rodar o app:     `<ex.: python -m app>`  /  `<ex.: npm run dev>`
+## Comandos (backpressure)
+- Instalar deps:   `uv sync`
+- Rodar testes:    `uv run pytest -q`
+- Um teste só:     `uv run pytest caminho::nome -v`
+- Typecheck:       `uv run pyright`
+- Lint:            `uv run ruff check .`
+- Format:          `uv run ruff format .`
+- Rodar o app:     `uv run streamlit run app/ui.py`
+- Ingerir dados:   `uv run python -m app.ingest`
 
 ## Convenções
-- Commits pequenos, um por tarefa. Mensagem descreve a tarefa concluída.
+- Commits pequenos, um por tarefa. Mensagem descreve a tarefa concluída. TDD: teste antes.
 - Busque com ripgrep ANTES de criar arquivos/funções novos (evite duplicar).
 - Não introduza dependências novas sem registrar o motivo no commit.
+- **O LLM nunca calcula números** — o backend computa, o modelo só redige. Ver spec.
+- Nos testes, `LLMClient` e chamadas HTTP são SEMPRE mockados (zero rede no loop).
 
 ## Skills (superpowers) usadas por modo
 - plan  → `superpowers:writing-plans`, `superpowers:dispatching-parallel-agents`
@@ -28,5 +34,6 @@
           `superpowers:verification-before-completion`
 
 ## Placas (guardrails que fui aprendendo) — adicione quando o Ralph descarrilar
-- (ex.: "Os testes de integração precisam do Postgres rodando: `docker compose up -d db`")
-- (ex.: "NÃO edite arquivos gerados em src/generated/")
+- Códigos de série do BCB / tabelas SIDRA podem mudar de versão: confirme no portal
+  oficial antes de codar (refs em `compass_artifact_*.md`, Eixo 1).
+- APIs públicas BR são instáveis (sobretudo SIDRA): assuma falhas; use retry + cache `raw/`.

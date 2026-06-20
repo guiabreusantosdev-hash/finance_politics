@@ -4,14 +4,30 @@
 > É descartável: regenere (rode `./loop.sh plan`) quando ficar obsoleto ou o
 > Ralph descarrilar. NÃO é a fonte da verdade — `specs/*.md` é.
 
+> Plano detalhado (fonte da verdade das tarefas): `docs/superpowers/plans/2026-06-20-nucleo-economico.md`
+
 ## Pendente
-- [ ] (vazio — rode `./loop.sh plan` para o Ralph preencher a partir das specs)
+- [ ] T1: Scaffold uv (pyproject, ruff, pyright, pytest)
+- [ ] T2: DTOs Pydantic (`app/models.py`)
+- [ ] T3: Config registry + loader (`config/*.yaml`, `app/config_loader.py`)
+- [ ] T4: Camada SQLite (`app/db.py`)
+- [ ] T5: Fetcher base + BCB (`app/fetchers/`)
+- [ ] T6: Fetcher SIDRA
+- [ ] T7: Fetchers IPEA + Tesouro
+- [ ] T8: Orquestração de ingestão (`app/ingest.py`)
+- [ ] T9: Cálculo determinístico (`app/calculo.py`)
+- [ ] T10: Payload builders (`app/payload.py`)
+- [ ] T11: Guard de factualidade (`app/guard.py`)
+- [ ] T12: LLMClient + ClaudeCodeClient (`app/llm.py`)
+- [ ] T13: Geração de resumo + retry (`app/resumo.py`)
+- [ ] T14: LLM-as-judge (`app/judge.py`)
+- [ ] T15: UI Streamlit + verificação da suíte (`app/ui.py`)
 
 ## Em progresso
 - (nada)
 
 ## Feito
-- (nada)
+- Specs + plano detalhado escritos e commitados.
 
 ## Bugs / dívidas descobertas
 - (nada)
