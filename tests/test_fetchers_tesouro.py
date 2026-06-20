@@ -22,7 +22,8 @@ def test_tesouro_parsing():
         return httpx.Response(200, json=FIXTURE)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = TesouroFetcher().fetch(_ind(), client)
+    raw, obs = TesouroFetcher().fetch(_ind(), client)
+    assert "data" in raw  # API envelope preserved
     assert obs[0].data == datetime.date(2023, 12, 1)
     assert obs[1].valor == 76.1
 
@@ -44,7 +45,7 @@ def test_tesouro_skips_null_valor():
         return httpx.Response(200, json=FIXTURE_WITH_NULL)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = TesouroFetcher().fetch(_ind(), client)
+    raw, obs = TesouroFetcher().fetch(_ind(), client)
     # Only 2 rows should be returned (the null row is skipped)
     assert len(obs) == 2
     dates = [o.data for o in obs]

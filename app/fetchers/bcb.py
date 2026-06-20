@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+from typing import Any
 
 import httpx
 
@@ -11,11 +12,12 @@ URL_BCB = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados?formato=
 
 
 class BCBFetcher:
-    def fetch(self, ind: Indicador, client: httpx.Client) -> list[Observacao]:
+    def fetch(self, ind: Indicador, client: httpx.Client) -> tuple[Any, list[Observacao]]:
         resp = client.get(URL_BCB.format(codigo=ind.codigo_fonte), timeout=30)
         resp.raise_for_status()
+        raw = resp.json()
         out: list[Observacao] = []
-        for row in resp.json():
+        for row in raw:
             data = datetime.datetime.strptime(row["data"], "%d/%m/%Y").date()
             out.append(Observacao(serie_id=ind.id, data=data, valor=float(row["valor"])))
-        return out
+        return raw, out

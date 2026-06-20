@@ -23,7 +23,8 @@ def test_sidra_skips_header_and_parses_quarter():
         return httpx.Response(200, json=FIXTURE)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = SIDRAFetcher().fetch(_ind(), client)
+    raw, obs = SIDRAFetcher().fetch(_ind(), client)
+    assert raw[0]["D2C"] == "Trimestre"  # header row still present in raw
     assert len(obs) == 2  # header row skipped
     assert obs[0].data == datetime.date(2024, 1, 1)   # 2024 Q1 -> Jan
     assert obs[0].valor == 7.9

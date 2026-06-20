@@ -16,6 +16,8 @@ from app.db import (
     upsert_observacoes,
     upsert_serie,
 )
+from typing import Any
+
 from app.fetchers.base import Fetcher
 from app.fetchers.bcb import BCBFetcher
 from app.fetchers.ipea import IPEAFetcher
@@ -41,7 +43,7 @@ def salvar_raw(fonte: str, serie_id: str, payload: object, agora: str, base: str
 
 def fetch_com_retry(
     fetcher: Fetcher, ind: Indicador, client: httpx.Client | None, tentativas: int = 3
-) -> list[Observacao]:
+) -> tuple[Any, list[Observacao]]:
     erro: Exception | None = None
     for i in range(tentativas):
         try:
@@ -58,11 +60,11 @@ def ingerir_indicador(
     upsert_serie(conn, ind)
     try:
         fetcher = FETCHERS[ind.fonte]
-        obs = fetch_com_retry(fetcher, ind, client)
+        raw, obs = fetch_com_retry(fetcher, ind, client)
     except Exception as exc:  # noqa: BLE001 - registra falha e segue, não derruba o pipeline
         registrar_ingestao(conn, ind.id, agora, "erro", 0, str(exc))
         return 0
-    salvar_raw(ind.fonte, ind.id, [o.model_dump() for o in obs], agora)
+    salvar_raw(ind.fonte, ind.id, raw, agora)
     n = upsert_observacoes(conn, obs)
     registrar_ingestao(conn, ind.id, agora, "ok", n, None)
     return n

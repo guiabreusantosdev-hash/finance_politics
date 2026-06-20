@@ -22,7 +22,8 @@ def test_ipea_odata_parsing():
         return httpx.Response(200, json=FIXTURE)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = IPEAFetcher().fetch(_ind(), client)
+    raw, obs = IPEAFetcher().fetch(_ind(), client)
+    assert "value" in raw  # OData envelope preserved
     assert obs[0].data == datetime.date(2014, 1, 1)
     assert obs[0].valor == 0.518
     assert obs[1].valor == 0.524

@@ -12,6 +12,9 @@ def _ind() -> Indicador:
     )
 
 
+_FLAKY_RAW = {"data": "raw_payload"}
+
+
 class _FlakyFetcher:
     def __init__(self):
         self.calls = 0
@@ -20,7 +23,7 @@ class _FlakyFetcher:
         self.calls += 1
         if self.calls < 2:
             raise RuntimeError("API instável")
-        return [Observacao(serie_id=ind.id, data=datetime.date(2024, 1, 1), valor=11.75)]
+        return _FLAKY_RAW, [Observacao(serie_id=ind.id, data=datetime.date(2024, 1, 1), valor=11.75)]
 
 
 class _DeadFetcher:
@@ -30,7 +33,8 @@ class _DeadFetcher:
 
 def test_retry_eventually_succeeds(monkeypatch):
     monkeypatch.setattr("app.ingest.time.sleep", lambda _s: None)
-    obs = fetch_com_retry(_FlakyFetcher(), _ind(), client=None, tentativas=3)
+    raw, obs = fetch_com_retry(_FlakyFetcher(), _ind(), client=None, tentativas=3)
+    assert raw is _FLAKY_RAW
     assert len(obs) == 1
 
 
@@ -48,12 +52,19 @@ def test_ingerir_indicador_logs_failure_without_raising(monkeypatch, tmp_path):
 def test_ingerir_indicador_success_persists(monkeypatch, tmp_path):
     monkeypatch.setattr("app.ingest.time.sleep", lambda _s: None)
     monkeypatch.setattr("app.ingest.FETCHERS", {"BCB": _FlakyFetcher()})
-    monkeypatch.setattr("app.ingest.salvar_raw", lambda *a, **k: str(tmp_path / "r.json"))
+    captured_raw: list[object] = []
+
+    def _fake_salvar_raw(fonte, serie_id, payload, agora, base="raw"):
+        captured_raw.append(payload)
+        return str(tmp_path / "r.json")
+
+    monkeypatch.setattr("app.ingest.salvar_raw", _fake_salvar_raw)
     conn = conectar(":memory:")
     criar_schema(conn)
     n = ingerir_indicador(conn, _ind(), client=None, agora="2026-06-20T00:00:00")
     assert n == 1
     assert len(observacoes_da_serie(conn, "bcb_432_selic")) == 1
+    assert captured_raw[0] is _FLAKY_RAW  # raw API JSON, not model_dump()s
 
 
 # --- C3: unknown fonte (KeyError on FETCHERS lookup) must log error and return 0 ---

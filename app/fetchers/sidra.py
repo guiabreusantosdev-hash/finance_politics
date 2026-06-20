@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+from typing import Any
 
 import httpx
 
@@ -22,12 +23,12 @@ def _periodo_para_data(p: str) -> datetime.date:
 
 
 class SIDRAFetcher:
-    def fetch(self, ind: Indicador, client: httpx.Client) -> list[Observacao]:
+    def fetch(self, ind: Indicador, client: httpx.Client) -> tuple[Any, list[Observacao]]:
         resp = client.get(URL_SIDRA.format(tabela=ind.codigo_fonte), timeout=60)
         resp.raise_for_status()
-        rows = resp.json()
+        raw = resp.json()
         out: list[Observacao] = []
-        for row in rows[1:]:  # first row is the header / labels
+        for row in raw[1:]:  # first row is the header / labels
             try:
                 valor = float(row["V"])
             except (TypeError, ValueError):
@@ -39,4 +40,4 @@ class SIDRAFetcher:
                     valor=valor,
                 )
             )
-        return out
+        return raw, out

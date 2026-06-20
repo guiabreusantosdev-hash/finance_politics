@@ -22,7 +22,8 @@ def test_bcb_parses_brazilian_dates_and_floats():
         return httpx.Response(200, json=FIXTURE)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = BCBFetcher().fetch(_ind(), client)
+    raw, obs = BCBFetcher().fetch(_ind(), client)
+    assert raw[0]["data"] == "01/01/2024"
     assert obs[0].data == datetime.date(2024, 1, 1)
     assert obs[0].valor == 11.75
     assert obs[1].valor == 11.25
