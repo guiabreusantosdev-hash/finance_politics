@@ -16,6 +16,8 @@ class TesouroFetcher:
         resp.raise_for_status()
         out: list[Observacao] = []
         for row in resp.json()["data"]:
+            if row.get("valor") is None:
+                continue
             data = datetime.date.fromisoformat(row["referencia"][:10])
             out.append(Observacao(serie_id=ind.id, data=data, valor=float(row["valor"])))
         return out

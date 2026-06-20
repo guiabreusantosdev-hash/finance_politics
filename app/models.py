@@ -60,6 +60,10 @@ class DeltaIndicador(BaseModel):
 class PayloadComparacao(BaseModel):
     mandato_a: str
     mandato_b: str
+    ano_inicio_a: int
+    ano_fim_a: int
+    ano_inicio_b: int
+    ano_fim_b: int
     deltas: list[DeltaIndicador]
 
 

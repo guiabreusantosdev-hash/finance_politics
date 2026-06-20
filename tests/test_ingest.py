@@ -54,3 +54,25 @@ def test_ingerir_indicador_success_persists(monkeypatch, tmp_path):
     n = ingerir_indicador(conn, _ind(), client=None, agora="2026-06-20T00:00:00")
     assert n == 1
     assert len(observacoes_da_serie(conn, "bcb_432_selic")) == 1
+
+
+# --- C3: unknown fonte (KeyError on FETCHERS lookup) must log error and return 0 ---
+
+def _ind_unknown_fonte() -> Indicador:
+    return Indicador(
+        id="unknown_123", fonte="FONTE_DESCONHECIDA", codigo_fonte="123",
+        nome="Indicador Desconhecido",
+        unidade="x", periodicidade="mensal", eixo="macro", metodo_anual="fim_periodo",
+    )
+
+
+def test_ingerir_indicador_unknown_fonte_logs_erro_sem_raise(monkeypatch):
+    """An indicator whose fonte is not in FETCHERS must log 'erro' and return 0 without raising."""
+    monkeypatch.setattr("app.ingest.time.sleep", lambda _s: None)
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    # FETCHERS does not contain "FONTE_DESCONHECIDA", so KeyError should be caught
+    n = ingerir_indicador(conn, _ind_unknown_fonte(), client=None, agora="2026-06-20T00:00:00")
+    assert n == 0
+    log = conn.execute("SELECT status FROM ingestao_log WHERE serie_id='unknown_123'").fetchall()
+    assert log and log[0][0] == "erro"

@@ -56,8 +56,8 @@ def ingerir_indicador(
     conn, ind: Indicador, client: httpx.Client | None, agora: str
 ) -> int:
     upsert_serie(conn, ind)
-    fetcher = FETCHERS[ind.fonte]
     try:
+        fetcher = FETCHERS[ind.fonte]
         obs = fetch_com_retry(fetcher, ind, client)
     except Exception as exc:  # noqa: BLE001 - registra falha e segue, não derruba o pipeline
         registrar_ingestao(conn, ind.id, agora, "erro", 0, str(exc))

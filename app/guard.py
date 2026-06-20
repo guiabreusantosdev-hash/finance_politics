@@ -5,7 +5,7 @@ import re
 
 from app.models import PayloadAno, PayloadComparacao, ResumoFactual
 
-_NUM = re.compile(r"-?\d+(?:[.\s]\d{3})*(?:[.,]\d+)?")
+_NUM = re.compile(r"(?<![.\d])-?\d+(?:[.\s]\d{3})*(?:[.,]\d+)?")
 
 
 class GuardError(ValueError):
@@ -26,13 +26,19 @@ def extrair_numeros(texto: str) -> list[float]:
 
 
 def numeros_permitidos(payload: PayloadAno | PayloadComparacao) -> set[float]:
-    nums: set[float] = set()
+    # Small ordinals/counts/quarters are always permitted (never plausible hallucinated values).
+    # Range 0-8: covers typical ordinals, counts, quarters (1-4), avoiding plausible % values.
+    nums: set[float] = set(float(i) for i in range(9))
     if isinstance(payload, PayloadAno):
         nums.add(float(payload.ano))
         for vi in payload.indicadores:
             if vi.valor is not None:
                 nums.add(vi.valor)
     else:
+        nums.add(float(payload.ano_inicio_a))
+        nums.add(float(payload.ano_fim_a))
+        nums.add(float(payload.ano_inicio_b))
+        nums.add(float(payload.ano_fim_b))
         for d in payload.deltas:
             for v in (d.valor_a, d.valor_b, d.delta):
                 if v is not None:

@@ -48,4 +48,12 @@ def construir_payload_comparacao(
             nome=ind.nome, valor_a=va, valor_b=vb, delta=delta,
             unidade=ind.unidade, fonte=ind.fonte,
         ))
-    return PayloadComparacao(mandato_a=mand_a.nome, mandato_b=mand_b.nome, deltas=deltas)
+    return PayloadComparacao(
+        mandato_a=mand_a.nome,
+        mandato_b=mand_b.nome,
+        ano_inicio_a=mand_a.inicio.year,
+        ano_fim_a=mand_a.fim.year,
+        ano_inicio_b=mand_b.inicio.year,
+        ano_fim_b=mand_b.fim.year,
+        deltas=deltas,
+    )
