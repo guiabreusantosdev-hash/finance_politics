@@ -30,6 +30,7 @@
 - Specs + plano detalhado escritos e commitados.
 - Persistência de resumos (cache + histórico) — spec+plano 2026-06-21.
 - Camada ministerial (ministros YAML + medidas com aprovação + resumo) — spec/plano 2026-06-21.
+- Camada legislativa (leis sancionadas + vetos por mandato) — spec/plano 2026-06-21.
 
 ## Bugs / dívidas descobertas
 - (nada)

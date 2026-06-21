@@ -1,4 +1,4 @@
-"""Streamlit UI: four tabs (por ano / por mandato / comparação / ministros)."""
+"""Streamlit UI: five tabs (por ano / por mandato / comparação / ministros / legislativo)."""
 from __future__ import annotations
 
 import pandas as pd
@@ -32,8 +32,8 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     conn = conectar()
     criar_schema(conn)
 
-    aba_ano, aba_mandato, aba_comp, aba_min = st.tabs(
-        ["Por ano", "Por mandato", "Comparação", "Ministros"]
+    aba_ano, aba_mandato, aba_comp, aba_min, aba_leg = st.tabs(
+        ["Por ano", "Por mandato", "Comparação", "Ministros", "Legislativo"]
     )
 
     with aba_ano:
@@ -129,13 +129,47 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         payload_min = construir_payload_ministerial(conn, ministros, mandato_g)
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_min)
 
+    with aba_leg:
+        from app.legislativo import leis_no_mandato, vetos_no_mandato
+        from app.payload import construir_payload_legislativo
+
+        nome_l = st.selectbox("Mandato", [m.nome for m in mandatos], key="mand_leg")
+        mandato_l = next(m for m in mandatos if m.nome == nome_l)
+        payload_l = construir_payload_legislativo(conn, mandato_l)
+
+        c1, c2 = st.columns(2)
+        c1.metric("Leis sancionadas", payload_l.total_leis)
+        c2.metric("Vetos", payload_l.total_vetos)
+        if payload_l.por_tipo:
+            st.bar_chart(pd.DataFrame(
+                {"tipo": list(payload_l.por_tipo), "n": list(payload_l.por_tipo.values())}
+            ).set_index("tipo"))
+        if payload_l.por_tema:
+            st.bar_chart(pd.DataFrame(
+                {"tema": list(payload_l.por_tema), "n": list(payload_l.por_tema.values())}
+            ).set_index("tema"))
+
+        st.subheader("Leis")
+        st.dataframe(pd.DataFrame([
+            {"tipo": x.tipo, "número": x.numero, "data": x.data, "ementa": x.ementa, "url": x.url}
+            for x in leis_no_mandato(conn, mandato_l)
+        ]))
+        st.subheader("Vetos")
+        st.dataframe(pd.DataFrame([
+            {"data": v.data, "tipo": v.tipo, "matéria": v.materia, "descrição": v.descricao}
+            for v in vetos_no_mandato(conn, mandato_l)
+        ]))
+
+        st.subheader("Resumo legislativo")
+        _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_l)
+
 
 def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
     from app.db import buscar_resumo_cache, historico_resumos, salvar_resumo
     from app.judge import julgar
-    from app.models import PayloadMinisterialGoverno
+    from app.models import PayloadLegislativoMandato, PayloadMinisterialGoverno
     from app.payload import descrever_payload, hash_payload
-    from app.resumo import _REGRAS_MINISTERIAL, gerar_resumo
+    from app.resumo import _REGRAS_LEGISLATIVO, _REGRAS_MINISTERIAL, gerar_resumo
 
     ph = hash_payload(payload)
     tipo, identificador = descrever_payload(payload)
@@ -149,7 +183,12 @@ def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
 
     if st.button(label, key=f"btn_{tipo}_{identificador}"):
         try:
-            resumo = gerar_resumo(client, payload, regras=_REGRAS_MINISTERIAL) if isinstance(payload, PayloadMinisterialGoverno) else gerar_resumo(client, payload)
+            if isinstance(payload, PayloadLegislativoMandato):
+                resumo = gerar_resumo(client, payload, regras=_REGRAS_LEGISLATIVO)
+            elif isinstance(payload, PayloadMinisterialGoverno):
+                resumo = gerar_resumo(client, payload, regras=_REGRAS_MINISTERIAL)
+            else:
+                resumo = gerar_resumo(client, payload)
             veredito = None
             try:
                 veredito = julgar(client, payload, resumo)

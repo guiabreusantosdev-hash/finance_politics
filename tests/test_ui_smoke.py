@@ -43,3 +43,13 @@ def test_ui_tem_aba_ministros():
     assert "Ministros" in src
     assert "construir_payload_ministerial" in src
     assert "rascunhar_medidas" in src
+
+
+def test_ui_tem_aba_legislativo():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "Legislativo" in src
+    assert "construir_payload_legislativo" in src
