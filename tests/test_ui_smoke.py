@@ -53,3 +53,15 @@ def test_ui_tem_aba_legislativo():
     src = inspect.getsource(ui)
     assert "Legislativo" in src
     assert "construir_payload_legislativo" in src
+
+
+def test_ui_aba_por_periodo_usa_slider_e_payload_periodo():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "Por período" in src
+    assert "st.slider" in src
+    assert "construir_payload_periodo" in src
+    assert "observacoes_entre" in src

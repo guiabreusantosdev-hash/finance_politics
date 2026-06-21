@@ -1,4 +1,4 @@
-"""Streamlit UI: five tabs (por ano / por mandato / comparação / ministros / legislativo)."""
+"""Streamlit UI: five tabs (por período / por mandato / comparação / ministros / legislativo)."""
 from __future__ import annotations
 
 import pandas as pd
@@ -22,9 +22,13 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     import streamlit as st
 
     from app.config_loader import carregar_indicadores, carregar_mandatos
-    from app.db import conectar, criar_schema, observacoes_da_serie
+    from app.db import conectar, criar_schema, observacoes_da_serie, observacoes_entre
     from app.llm import ClaudeCodeClient
-    from app.payload import construir_payload_ano, construir_payload_comparacao, construir_payload_mandato
+    from app.payload import (
+        construir_payload_comparacao,
+        construir_payload_mandato,
+        construir_payload_periodo,
+    )
 
     st.set_page_config(page_title="finance_politics", layout="wide")
     indicadores = carregar_indicadores()
@@ -33,17 +37,28 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     criar_schema(conn)
 
     aba_ano, aba_mandato, aba_comp, aba_min, aba_leg = st.tabs(
-        ["Por ano", "Por mandato", "Comparação", "Ministros", "Legislativo"]
+        ["Por período", "Por mandato", "Comparação", "Ministros", "Legislativo"]
     )
 
     with aba_ano:
-        ano = st.number_input("Ano", min_value=2003, max_value=2026, value=2024, step=1)
+        import datetime as _dt
+
+        anos = [m.inicio.year for m in mandatos] + [m.fim.year for m in mandatos]
+        ano_min, ano_max = min(anos), max(anos)
+        ano_ini, ano_fim = st.slider(
+            "Período", min_value=ano_min, max_value=ano_max,
+            value=(max(ano_min, ano_max - 3), ano_max),
+        )
+        di = _dt.date(ano_ini, 1, 1)
+        df = _dt.date(ano_fim, 12, 31)
         for ind in indicadores:
-            obs = observacoes_da_serie(conn, ind.id)
+            obs = observacoes_entre(conn, ind.id, di, df)
             if obs:
-                st.plotly_chart(grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
-                                use_container_width=True)
-        payload = construir_payload_ano(conn, indicadores, int(ano))
+                st.plotly_chart(
+                    grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
+                    width="stretch", key=f"periodo_{ind.id}",
+                )
+        payload = construir_payload_periodo(conn, indicadores, int(ano_ini), int(ano_fim))
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload)
 
     with aba_mandato:
@@ -55,7 +70,8 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             if obs:
                 st.plotly_chart(
                     grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
-                    use_container_width=True,
+                    width="stretch",
+                    key=f"mandato_{ind.id}",
                 )
         st.dataframe(pd.DataFrame([v.model_dump() for v in payload_m.indicadores]))
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_m)
