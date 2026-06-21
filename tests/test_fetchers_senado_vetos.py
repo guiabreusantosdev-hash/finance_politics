@@ -70,3 +70,31 @@ def test_normalizar_vetos_url_from_materia():
     vetos = normalizar_vetos(raw)
     v_16269 = next(v for v in vetos if v.id == "senado_16269")
     assert v_16269.url == "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/161861"
+
+
+def test_normalizar_vetos_skips_entries_with_no_date():
+    """A veto with both DataRecebimentoCongresso and DataPublicacao absent must be skipped."""
+    raw = {
+        "ListaVetosAnoCN": {
+            "Vetos": {
+                "Veto": [
+                    {
+                        "Codigo": "99001",
+                        # no DataRecebimentoCongresso, no DataPublicacao
+                        "Total": "Não",
+                        "Assunto": "Sem data",
+                    },
+                    {
+                        "Codigo": "99002",
+                        "DataRecebimentoCongresso": "2023-05-10",
+                        "Total": "Sim",
+                        "Assunto": "Com data",
+                    },
+                ]
+            }
+        }
+    }
+    vetos = normalizar_vetos(raw)
+    ids = {v.id for v in vetos}
+    assert "senado_99001" not in ids, "veto sem data não deve ser incluído"
+    assert "senado_99002" in ids, "veto com data deve ser incluído"

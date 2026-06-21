@@ -74,7 +74,6 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     with aba_min:
         from app.db import (
             aprovar_medida,
-            descartar_medida,
             medidas_do_governo,
             salvar_medida,
         )
@@ -112,18 +111,27 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             ministro_sel = do_gov[nomes_min.index(escolha)]
             if st.button("Sugerir medidas (IA)", key="btn_ia"):
                 try:
-                    rascunhos = rascunhar_medidas(ClaudeCodeClient(), ministro_sel)
-                    for r in rascunhos:
-                        st.warning(f"RASCUNHO (não verificado): {r.titulo}")
-                        st.write(r.descricao)
-                        st.write(r.fonte_url)
-                        novo_id = salvar_medida(conn, r)
-                        if st.button(f"Aprovar #{novo_id}", key=f"apr_{novo_id}"):
-                            aprovar_medida(conn, novo_id)
-                        if st.button(f"Descartar #{novo_id}", key=f"desc_{novo_id}"):
-                            descartar_medida(conn, novo_id)
+                    st.session_state["rascunhos_ia"] = rascunhar_medidas(
+                        ClaudeCodeClient(), ministro_sel
+                    )
                 except Exception as exc:
                     st.error(f"Não foi possível sugerir medidas: {exc}")
+
+        # Render pending drafts OUTSIDE the generate button so they survive reruns
+        rascunhos_pendentes: list = list(st.session_state.get("rascunhos_ia", []))
+        for i, r in enumerate(rascunhos_pendentes):
+            st.warning(f"RASCUNHO (não verificado): {r.titulo}")
+            st.write(r.descricao)
+            st.write(r.fonte_url)
+            col_apr, col_desc = st.columns(2)
+            if col_apr.button("Aprovar", key=f"apr_{i}"):
+                novo_id = salvar_medida(conn, r)
+                aprovar_medida(conn, novo_id)
+                st.session_state["rascunhos_ia"].pop(i)
+                st.rerun()
+            if col_desc.button("Descartar", key=f"desc_{i}"):
+                st.session_state["rascunhos_ia"].pop(i)
+                st.rerun()
 
         st.subheader("Resumo do governo")
         payload_min = construir_payload_ministerial(conn, ministros, mandato_g)

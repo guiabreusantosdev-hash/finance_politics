@@ -41,6 +41,8 @@ def normalizar_vetos(veto_json: dict) -> list[Veto]:
 
         # Date: prefer DataRecebimentoCongresso, fallback DataPublicacao
         data_str = v.get("DataRecebimentoCongresso") or v.get("DataPublicacao") or ""
+        if not data_str:
+            continue  # skip vetos with no usable date
         data: datetime.date = datetime.date.fromisoformat(data_str[:10])
 
         tipo = _tipo(v.get("Total", ""))

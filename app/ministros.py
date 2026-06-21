@@ -11,7 +11,7 @@ def carregar_ministros(
     mandatos_path: str = "config/mandatos.yaml",
 ) -> list[Ministro]:
     with open(mandatos_path, encoding="utf-8") as fh:
-        mandatos = [Mandato.model_validate(m) for m in yaml.safe_load(fh)]
+        mandatos = [Mandato.model_validate(m) for m in (yaml.safe_load(fh) or [])]
     nomes_validos = {m.nome for m in mandatos}
 
     with open(path, encoding="utf-8") as fh:
