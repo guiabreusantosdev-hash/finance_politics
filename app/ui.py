@@ -4,7 +4,7 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 
-from app.models import Observacao, PayloadAno, PayloadComparacao, PayloadMandato
+from app.models import Observacao
 
 
 def serie_para_df(obs: list[Observacao]) -> pd.DataFrame:
@@ -42,8 +42,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
                 st.plotly_chart(grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
                                 use_container_width=True)
         payload = construir_payload_ano(conn, indicadores, int(ano))
-        if st.button("Gerar resumo do ano"):
-            _mostrar_resumo(st, ClaudeCodeClient(), payload)
+        _mostrar_resumo(st, conn, ClaudeCodeClient(), payload)
 
     with aba_mandato:
         nome = st.selectbox("Mandato", [m.nome for m in mandatos])
@@ -57,8 +56,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
                     use_container_width=True,
                 )
         st.dataframe(pd.DataFrame([v.model_dump() for v in payload_m.indicadores]))
-        if st.button("Gerar resumo do mandato"):
-            _mostrar_resumo(st, ClaudeCodeClient(), payload_m)
+        _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_m)
 
     with aba_comp:
         nomes = [m.nome for m in mandatos]
@@ -69,27 +67,57 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         mb = next(m for m in mandatos if m.nome == b)
         payload_c = construir_payload_comparacao(conn, indicadores, ma, mb)
         st.dataframe(pd.DataFrame([d.model_dump() for d in payload_c.deltas]))
-        if st.button("Gerar resumo comparativo"):
-            _mostrar_resumo(st, ClaudeCodeClient(), payload_c)
+        _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_c)
 
 
-def _mostrar_resumo(st, client, payload: PayloadAno | PayloadComparacao | PayloadMandato) -> None:  # pragma: no cover
+def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
+    from app.db import buscar_resumo_cache, historico_resumos, salvar_resumo
     from app.judge import julgar
+    from app.payload import descrever_payload, hash_payload
     from app.resumo import gerar_resumo
 
-    try:
-        resumo = gerar_resumo(client, payload)
-        st.info("Resumo gerado por IA a partir dos dados acima:")
-        for eixo, txt in resumo.paragrafos_por_eixo.items():
+    ph = hash_payload(payload)
+    tipo, identificador = descrever_payload(payload)
+    cache = buscar_resumo_cache(conn, ph)
+
+    if cache is not None:
+        st.success(f"✅ Em cache (gerado em {cache.criado_em} · {cache.modelo})")
+        for eixo, txt in cache.resumo.paragrafos_por_eixo.items():
             st.markdown(f"**{eixo}** — {txt}")
+    label = "Regerar resumo" if cache is not None else "Gerar resumo"
+
+    if st.button(label, key=f"btn_{tipo}_{identificador}"):
         try:
-            veredito = julgar(client, payload, resumo)
-            if not veredito.ancorado or not veredito.neutro:
-                aviso = f"⚠️ O juiz de IA detectou problemas no resumo: {veredito.observacoes}"
-                if veredito.numeros_fora_do_payload:
-                    aviso += f" Números fora do payload: {veredito.numeros_fora_do_payload}"
-                st.warning(aviso)
-        except Exception:
-            pass  # judge failure is non-fatal; summary is still shown
-    except ValueError as exc:
-        st.error(f"Não foi possível gerar o resumo: {exc}")
+            resumo = gerar_resumo(client, payload)
+            veredito = None
+            try:
+                veredito = julgar(client, payload, resumo)
+                if not veredito.ancorado or not veredito.neutro:
+                    aviso = f"⚠️ O juiz de IA detectou problemas: {veredito.observacoes}"
+                    if veredito.numeros_fora_do_payload:
+                        aviso += f" Números fora do payload: {veredito.numeros_fora_do_payload}"
+                    st.warning(aviso)
+            except Exception:
+                pass  # juiz é não-fatal
+            salvar_resumo(
+                conn,
+                payload=payload,
+                resumo=resumo,
+                veredito=veredito,
+                modelo=client.modelo or "claude-code-default",
+            )
+            st.info("Resumo gerado e salvo:")
+            for eixo, txt in resumo.paragrafos_por_eixo.items():
+                st.markdown(f"**{eixo}** — {txt}")
+        except ValueError as exc:
+            st.error(f"Não foi possível gerar o resumo: {exc}")
+
+    hist = historico_resumos(conn, tipo, identificador)
+    if hist:
+        with st.expander(f"Histórico ({len(hist)})"):
+            for reg in hist:
+                flag = ""
+                if reg.veredito is not None:
+                    ok = reg.veredito.get("ancorado") and reg.veredito.get("neutro")
+                    flag = " ✅" if ok else " ⚠️"
+                st.markdown(f"- **{reg.criado_em}** · {reg.modelo}{flag}")

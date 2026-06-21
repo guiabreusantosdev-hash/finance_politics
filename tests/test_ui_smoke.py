@@ -23,3 +23,12 @@ def test_grafico_serie_tem_titulo_com_fonte_e_unidade():
     assert "Selic" in titulo
     assert "BCB" in titulo
     assert "% a.a." in titulo
+
+
+def test_ui_importa_helpers_de_persistencia():
+    import app.ui as ui
+
+    src = __import__("inspect").getsource(ui)
+    assert "buscar_resumo_cache" in src
+    assert "salvar_resumo" in src
+    assert "historico_resumos" in src
