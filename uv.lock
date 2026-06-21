@@ -328,7 +328,7 @@ requires-dist = [
     { name = "plotly", specifier = ">=5.22" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "streamlit", specifier = ">=1.36" },
+    { name = "streamlit", specifier = ">=1.49" },
 ]
 
 [package.metadata.requires-dev]

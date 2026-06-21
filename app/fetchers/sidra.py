@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+import re
 from typing import Any
 
 import httpx
@@ -12,7 +13,7 @@ URL_SIDRA = (
     "https://apisidra.ibge.gov.br/values/t/{tabela}/n1/all/v/{variavel}/p/all{classif}?formato=json"
 )
 
-_ROTULOS_PERIODO = ("Trimestre", "Ano", "Mês", "Mes", "Semestre", "Período", "Periodo")
+_ROTULOS_PERIODO = ("Trimestre", "Ano", "Mês", "Semestre", "Período")
 
 
 def _periodo_para_data(p: str) -> datetime.date:
@@ -36,7 +37,7 @@ def _coluna_periodo(header: dict) -> str:
         if (
             chave.startswith("D")
             and chave.endswith("C")
-            and any(r in rotulo for r in _ROTULOS_PERIODO)
+            and any(re.search(rf"\b{r}\b", rotulo) for r in _ROTULOS_PERIODO)
         ):
             return chave
     raise ValueError(f"coluna de período não encontrada no cabeçalho SIDRA: {header}")

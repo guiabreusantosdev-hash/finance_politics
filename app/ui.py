@@ -49,10 +49,10 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             "Período", min_value=ano_min, max_value=ano_max,
             value=(max(ano_min, ano_max - 3), ano_max),
         )
-        di = _dt.date(ano_ini, 1, 1)
-        df = _dt.date(ano_fim, 12, 31)
+        data_ini = _dt.date(ano_ini, 1, 1)
+        data_fim = _dt.date(ano_fim, 12, 31)
         for ind in indicadores:
-            obs = observacoes_entre(conn, ind.id, di, df)
+            obs = observacoes_entre(conn, ind.id, data_ini, data_fim)
             if obs:
                 st.plotly_chart(
                     grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),

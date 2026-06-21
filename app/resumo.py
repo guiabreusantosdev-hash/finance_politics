@@ -5,7 +5,7 @@ import json
 
 from app.guard import GuardError, verificar
 from app.llm import LLMClient
-from app.models import PayloadAno, PayloadComparacao, PayloadLegislativoMandato, PayloadMandato, PayloadMinisterialGoverno, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadLegislativoMandato, PayloadMandato, PayloadMinisterialGoverno, PayloadPeriodo, ResumoFactual
 
 _REGRAS = (
     "Você redige um resumo FACTUAL e NEUTRO sobre indicadores de um governo. "
@@ -39,7 +39,7 @@ _REGRAS_LEGISLATIVO = (
 
 
 def montar_prompt(
-    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno | PayloadLegislativoMandato,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno | PayloadLegislativoMandato | PayloadPeriodo,
     regras: str = _REGRAS,
 ) -> str:
     return f"{regras}\n\nPAYLOAD:\n{payload.model_dump_json(indent=2)}"
@@ -47,7 +47,7 @@ def montar_prompt(
 
 def gerar_resumo(
     client: LLMClient,
-    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno | PayloadLegislativoMandato,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno | PayloadLegislativoMandato | PayloadPeriodo,
     tentativas: int = 3,
     regras: str = _REGRAS,
 ) -> ResumoFactual:

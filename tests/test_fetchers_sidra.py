@@ -84,3 +84,27 @@ def test_sidra_le_periodo_da_coluna_certa_quando_ha_variavel():
     raw, obs = SIDRAFetcher().fetch(ind, httpx.Client(transport=httpx.MockTransport(handler)))
     assert [o.data for o in obs] == [datetime.date(2012, 1, 1), datetime.date(2013, 1, 1)]
     assert obs[0].valor == 0.540
+
+
+def test_sidra_mesorregia_nao_confundida_com_periodo():
+    """A 'Mesorregião (Código)' column placed BEFORE 'Ano (Código)' must NOT be
+    picked as the period column. The bare substring 'Mes' used to match it; the
+    word-boundary regex must NOT match."""
+    _MESO_FIXTURE = [
+        # header row: D1C=Mesorregião, D2C=Variável, D3C=Ano
+        {"D1C": "Mesorregião (Código)", "D2C": "Variável (Código)", "D3C": "Ano (Código)", "V": "V"},
+        # data row: mesoregion code=3101, variable code=99, year=2020
+        {"D1C": "3101", "D2C": "99", "D3C": "2020", "V": "0.5"},
+    ]
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=_MESO_FIXTURE)
+
+    ind = Indicador(
+        id="ibge_meso_test", fonte="IBGE", codigo_fonte="9999", nome="Teste Mesorregião",
+        unidade="índice", periodicidade="anual", eixo="macro", metodo_anual="fim_periodo",
+    )
+    raw, obs = SIDRAFetcher().fetch(ind, httpx.Client(transport=httpx.MockTransport(handler)))
+    # Must resolve to Ano column (D3C="2020"), NOT the mesoregion code (D1C="3101")
+    assert len(obs) == 1
+    assert obs[0].data == datetime.date(2020, 1, 1)
