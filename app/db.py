@@ -2,9 +2,14 @@
 from __future__ import annotations
 
 import datetime
+import json
 import sqlite3
+from typing import TYPE_CHECKING
 
 from app.models import Indicador, Observacao
+
+if TYPE_CHECKING:
+    from app.models import ResumoRegistro
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS series (
@@ -19,6 +24,14 @@ CREATE TABLE IF NOT EXISTS observacoes (
 CREATE TABLE IF NOT EXISTS ingestao_log (
     serie_id TEXT, executado_em TEXT, status TEXT, n_registros INTEGER, erro TEXT
 );
+CREATE TABLE IF NOT EXISTS resumos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tipo TEXT, identificador TEXT, payload_hash TEXT,
+    payload_json TEXT, resumo_json TEXT, veredito_json TEXT,
+    modelo TEXT, criado_em TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_resumos_lookup
+    ON resumos (tipo, identificador, criado_em);
 """
 
 
@@ -96,3 +109,81 @@ def observacoes_da_serie(
         )
         for r in cur.fetchall()
     ]
+
+
+def _registro_de_row(row: tuple) -> "ResumoRegistro":
+    from app.models import ResumoFactual, ResumoRegistro
+
+    return ResumoRegistro(
+        id=row[0],
+        tipo=row[1],
+        identificador=row[2],
+        payload_hash=row[3],
+        resumo=ResumoFactual.model_validate_json(row[5]),
+        veredito=json.loads(row[6]) if row[6] is not None else None,
+        modelo=row[7],
+        criado_em=row[8],
+    )
+
+
+def salvar_resumo(
+    conn: sqlite3.Connection,
+    *,
+    payload,
+    resumo,
+    veredito,
+    modelo: str,
+    criado_em: str | None = None,
+) -> int:
+    from app.payload import descrever_payload, hash_payload
+
+    tipo, identificador = descrever_payload(payload)
+    quando = criado_em or datetime.datetime.now().isoformat()
+    cur = conn.execute(
+        """INSERT INTO resumos (tipo, identificador, payload_hash, payload_json,
+           resumo_json, veredito_json, modelo, criado_em)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (
+            tipo,
+            identificador,
+            hash_payload(payload),
+            payload.model_dump_json(),
+            resumo.model_dump_json(),
+            veredito.model_dump_json() if veredito is not None else None,
+            modelo,
+            quando,
+        ),
+    )
+    conn.commit()
+    assert cur.lastrowid is not None
+    return int(cur.lastrowid)
+
+
+_COLS_RESUMO = (
+    "id, tipo, identificador, payload_hash, payload_json, "
+    "resumo_json, veredito_json, modelo, criado_em"
+)
+
+
+def buscar_resumo_cache(
+    conn: sqlite3.Connection, payload_hash: str
+) -> "ResumoRegistro | None":
+    cur = conn.execute(
+        f"""SELECT {_COLS_RESUMO} FROM resumos WHERE payload_hash = ?
+            ORDER BY criado_em DESC, id DESC LIMIT 1""",
+        (payload_hash,),
+    )
+    row = cur.fetchone()
+    return _registro_de_row(row) if row is not None else None
+
+
+def historico_resumos(
+    conn: sqlite3.Connection, tipo: str, identificador: str
+) -> "list[ResumoRegistro]":
+    cur = conn.execute(
+        f"""SELECT {_COLS_RESUMO} FROM resumos
+            WHERE tipo = ? AND identificador = ?
+            ORDER BY criado_em DESC, id DESC""",
+        (tipo, identificador),
+    )
+    return [_registro_de_row(r) for r in cur.fetchall()]
