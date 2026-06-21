@@ -1,0 +1,226 @@
+{
+ "ListaVetosAnoCN": {
+  "Vetos": {
+   "Veto": [
+    {
+     "Codigo": "16269",
+     "Materia": {
+      "Codigo": "161861",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "VET",
+      "Numero": "49",
+      "Ano": "2023",
+      "EmTramitacao": "Não",
+      "Ementa": "Veto Parcial aposto ao Projeto de Lei nº 3.626, de 2023, que \"Dispõe sobre a modalidade lotérica denominada apostas de quota fixa; altera as Leis nºs 5.768, de 20 de dezembro de 1971, e 13.756, de 12 de dezembro de 2018, e a Medida Provisória nº 2.158-35, de 24 de agosto de 2001; revoga dispositivos do Decreto-Lei nº 204, de 27 de fevereiro de 1967; e dá outras providências\".",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/161861"
+     },
+     "MateriaVetada": {
+      "Codigo": "160197",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "PL",
+      "Numero": "3626",
+      "Ano": "2023",
+      "DescricaoObjetivoProcesso": "Revisora",
+      "EmTramitacao": "Não",
+      "Ementa": "Dispõe sobre a modalidade lotérica denominada apostas de quota fixa; altera as Leis nºs 5.768, de 20 de dezembro de 1971, e 13.756, de 12 de dezembro de 2018, e a Medida Provisória nº 2.158-35, de 24 de agosto de 2001; revoga dispositivos do Decreto-Lei nº 204, de 27 de fevereiro de 1967; e dá outras providências.",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/160197",
+      "UrlRelatorias": "https://legis.senado.leg.br/dadosabertos/materia/relatorias/160197",
+      "NormaGerada": {
+       "NomeNorma": "Lei nº 14.790 de 29/12/2023",
+       "UrlNorma": "https://legis.senado.leg.br/norma/38067061",
+       "CodigoNorma": "38067061",
+       "SiglaTipoNorma": "LEI-n",
+       "DescricaoTipoNorma": "Lei Numerada",
+       "NumeroNorma": "14790",
+       "AnoNorma": "2023",
+       "DataAssinatura": "2023-12-29",
+       "Observacao": "Quanto à produção de efeitos desta Lei, vide o Art. 58.",
+       "DataPublicacao": "2023-12-30",
+       "SiglaVeiculoPublicacao": "DOUE",
+       "DescricaoVeiculoPublicacao": "[Diário Oficial da União - Edição Extra  de 30/12/2023 - nº 247-J] (p. 1, col. 1)"
+      }
+     },
+     "Mensagem": {
+      "Sigla": "MSG",
+      "Numero": "749",
+      "Ano": "2023",
+      "UrlPlanalto": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/msg/vep/VEP-749-23.htm"
+     },
+     "Total": "Não",
+     "Assunto": "Apostas de quota fixa",
+     "DataRecebimentoCongresso": "2024-01-03",
+     "DataPublicacao": "2023-12-30",
+     "DataSobrestacaoPauta": "2024-03-03",
+     "SobrestandoPauta": "Não",
+     "QuantidadeDispositivos": "8",
+     "UrlDispositivos": "https://www.congressonacional.leg.br/dados/plenario/resultado/veto/materia/161861"
+    },
+    {
+     "Codigo": "16229",
+     "Materia": {
+      "Codigo": "161854",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "VET",
+      "Numero": "48",
+      "Ano": "2023",
+      "EmTramitacao": "Não",
+      "Ementa": "Veto Parcial aposto ao Projeto de Lei do Senado nº 332, de 2018 (nº 116/2023, na Câmara dos Deputados), que \"Altera a Lei Complementar nº 87, de 13 de setembro de 1996 (Lei Kandir), para vedar a incidência do Imposto sobre Operações relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte Interestadual e Intermunicipal e de Comunicação (ICMS) nos casos de transferência de mercadoria entre estabelecimentos do mesmo contribuinte\".",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/161854"
+     },
+     "MateriaVetada": {
+      "Codigo": "133899",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "PLS",
+      "Numero": "332",
+      "Ano": "2018",
+      "DescricaoObjetivoProcesso": "Iniciadora",
+      "EmTramitacao": "Não",
+      "Ementa": "Altera a Lei Complementar nº 87, de 13 de setembro de 1996, para vedar a incidência do Imposto sobre Operações Relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte Interestadual e Intermunicipal e de Comunicação nos casos de transferência de mercadoria entre estabelecimentos do mesmo contribuinte.",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/133899",
+      "UrlRelatorias": "https://legis.senado.leg.br/dadosabertos/materia/relatorias/133899",
+      "NormaGerada": {
+       "NomeNorma": "Lei Complementar nº 204 de 28/12/2023",
+       "UrlNorma": "https://legis.senado.leg.br/norma/38058134",
+       "CodigoNorma": "38058134",
+       "SiglaTipoNorma": "LCP",
+       "DescricaoTipoNorma": "Lei Complementar",
+       "NumeroNorma": "204",
+       "AnoNorma": "2023",
+       "DataAssinatura": "2023-12-28",
+       "Observacao": "Quanto à vigência desta Lei Complementar, vide o art. 3º.",
+       "DataPublicacao": "2023-12-29",
+       "SiglaVeiculoPublicacao": "DOU",
+       "DescricaoVeiculoPublicacao": "[Diário Oficial da União  de 29/12/2023] (p. 1, col. 1)"
+      }
+     },
+     "Mensagem": {
+      "Sigla": "MSG",
+      "Numero": "743",
+      "Ano": "2023",
+      "UrlPlanalto": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/msg/vep/VEP-743-23.htm"
+     },
+     "Total": "Não",
+     "Assunto": "Isenção de ICMS no trânsito de produtos da mesma empresa",
+     "DataRecebimentoCongresso": "2023-12-29",
+     "DataPublicacao": "2023-12-29",
+     "DataSobrestacaoPauta": "2024-03-03",
+     "SobrestandoPauta": "Não",
+     "QuantidadeDispositivos": "2",
+     "UrlDispositivos": "https://www.congressonacional.leg.br/dados/plenario/resultado/veto/materia/161854"
+    },
+    {
+     "Codigo": "16209",
+     "Materia": {
+      "Codigo": "161843",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "VET",
+      "Numero": "47",
+      "Ano": "2023",
+      "EmTramitacao": "Não",
+      "Ementa": "Veto Parcial aposto ao Projeto de Lei do Senado nº 526, de 1999 (nº 6.299/2002, na Câmara dos Deputados, e devolvido ao Senado como PL nº 1.459/2022), que \"Dispõe sobre a pesquisa, a experimentação, a produção, a embalagem, a rotulagem, o transporte, o armazenamento, a comercialização, a utilização, a importação, a exportação, o destino final dos resíduos e das embalagens, o registro, a classificação, o controle, a inspeção e a fiscalização de agrotóxicos, de produtos de controle ambiental, de seus produtos técnicos e afins; revoga as Leis nºs 7.802, de 11 de julho de 1989, e 9.974, de 6 de junho de 2000, e partes de anexos das Leis nºs 6.938, de 31 de agosto de 1981, e 9.782, de 26 de janeiro de 1999\".",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/161843"
+     },
+     "MateriaVetada": {
+      "Codigo": "41703",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "PLS",
+      "Numero": "526",
+      "Ano": "1999",
+      "DescricaoObjetivoProcesso": "Iniciadora",
+      "EmTramitacao": "Não",
+      "Ementa": "Altera a Lei nº 7802, de 11 de julho de 1999, que \"dispõe sobre a pesquisa, a experimentação, a produção, a embalagem e rotulagem,  o transporte, o armazenamento, a comercialização, a propaganda comercial, a utilização, a importação, o destino, a classificação, o controle, a inspeção e a fiscalização de agrotóxicos, seus componentes e afins, e dá outras providências.\"",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/41703",
+      "UrlRelatorias": "https://legis.senado.leg.br/dadosabertos/materia/relatorias/41703",
+      "NormaGerada": {
+       "NomeNorma": "Lei nº 14.785 de 27/12/2023",
+       "UrlNorma": "https://legis.senado.leg.br/norma/38039732",
+       "CodigoNorma": "38039732",
+       "SiglaTipoNorma": "LEI-n",
+       "DescricaoTipoNorma": "Lei Numerada",
+       "NumeroNorma": "14785",
+       "AnoNorma": "2023",
+       "DataAssinatura": "2023-12-27",
+       "DataPublicacao": "2023-12-28",
+       "SiglaVeiculoPublicacao": "DOU",
+       "DescricaoVeiculoPublicacao": "[Diário Oficial da União  de 28/12/2023] (p. 28, col. 1)"
+      }
+     },
+     "Mensagem": {
+      "Sigla": "MSG",
+      "Numero": "741",
+      "Ano": "2023",
+      "UrlPlanalto": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/msg/vep/VEP-741-23.htm"
+     },
+     "Total": "Não",
+     "Assunto": "Flexibilização de registro de agrotóxicos",
+     "DataRecebimentoCongresso": "2023-12-28",
+     "DataPublicacao": "2023-12-28",
+     "DataSobrestacaoPauta": "2024-03-03",
+     "SobrestandoPauta": "Não",
+     "QuantidadeDispositivos": "17",
+     "UrlDispositivos": "https://www.congressonacional.leg.br/dados/plenario/resultado/veto/materia/161843"
+    },
+    {
+     "Codigo": "16189",
+     "Materia": {
+      "Codigo": "161825",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "VET",
+      "Numero": "46",
+      "Ano": "2023",
+      "EmTramitacao": "Sim",
+      "Ementa": "Veto Parcial aposto ao Projeto de Lei nº 3.954, de 2023, que \"Altera a Lei nº 14.133, de 1º de abril de 2021 (Lei de Licitações e Contratos Administrativos), para determinar o modo de disputa fechado nas licitações de obras e serviços que especifica, facultar a adesão de Município a ata de registro de preços licitada por outro ente do mesmo nível federativo, dispor sobre a execução e liquidação do objeto remanescente de contrato administrativo rescindido, permitir a prestação de garantia na forma de título de capitalização e promover a gestão e a aplicação eficientes dos recursos oriundos de convênios e contratos de repasse\".",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/161825"
+     },
+     "MateriaVetada": {
+      "Codigo": "159204",
+      "SiglaCasa": "CN",
+      "NomeCasa": "Congresso Nacional",
+      "Sigla": "PL",
+      "Numero": "3954",
+      "Ano": "2023",
+      "DescricaoObjetivoProcesso": "Iniciadora",
+      "EmTramitacao": "Sim",
+      "Ementa": "Altera a Lei nº 14.133, de 1º de abril de 2021, para promover a gestão eficiente dos recursos relativos à aplicação dos recursos de convênios e dá outras providências.",
+      "UrlMovimentacoes": "https://legis.senado.leg.br/dadosabertos/materia/movimentacoes/159204",
+      "UrlRelatorias": "https://legis.senado.leg.br/dadosabertos/materia/relatorias/159204",
+      "NormaGerada": {
+       "NomeNorma": "Lei nº 14.770 de 22/12/2023",
+       "UrlNorma": "https://legis.senado.leg.br/norma/38020880",
+       "CodigoNorma": "38020880",
+       "SiglaTipoNorma": "LEI-n",
+       "DescricaoTipoNorma": "Lei Numerada",
+       "NumeroNorma": "14770",
+       "AnoNorma": "2023",
+       "DataAssinatura": "2023-12-22",
+       "DataPublicacao": "2023-12-22",
+       "SiglaVeiculoPublicacao": "DOUE",
+       "DescricaoVeiculoPublicacao": "[Diário Oficial da União - Edição Extra  de 22/12/2023 - nº 243-C] (p. 3, col. 2)"
+      }
+     },
+     "Mensagem": {
+      "Sigla": "MSG",
+      "Numero": "721",
+      "Ano": "2023",
+      "UrlPlanalto": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/msg/vep/VEP-721-23.htm"
+     },
+     "Total": "Não",
+     "Assunto": "Títulos de capitalização como garantia para execução de obras",
+     "DataRecebimentoCongresso": "2023-12-26",
+     "DataPublicacao": "2023-12-22",
+     "DataSobrestacaoPauta": "2024-03-03",
+     "SobrestandoPauta": "Sim",
+     "QuantidadeDispositivos": "14",
+     "UrlDispositivos": "https://www.congressonacional.leg.br/dados/plenario/resultado/veto/materia/161825"
+    }
+   ]
+  }
+ }
+}

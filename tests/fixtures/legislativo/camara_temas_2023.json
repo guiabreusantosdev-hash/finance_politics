@@ -1,0 +1,157 @@
+{
+ "dados": [
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/369205",
+   "siglaTipo": "PL",
+   "numero": 4089,
+   "ano": 2023,
+   "codTema": 40,
+   "tema": "Economia",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/369205",
+   "siglaTipo": "PL",
+   "numero": 4089,
+   "ano": 2023,
+   "codTema": 52,
+   "tema": "Previdência e Assistência Social",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/618609",
+   "siglaTipo": "PL",
+   "numero": 6155,
+   "ano": 2023,
+   "codTema": 72,
+   "tema": "Homenagens e Datas Comemorativas",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/1197773",
+   "siglaTipo": "PL",
+   "numero": 4015,
+   "ano": 2023,
+   "codTema": 43,
+   "tema": "Direito Penal e Processual Penal",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2345508",
+   "siglaTipo": "PDL",
+   "numero": 1,
+   "ano": 2023,
+   "codTema": 57,
+   "tema": "Defesa e Segurança",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2345508",
+   "siglaTipo": "PDL",
+   "numero": 1,
+   "ano": 2023,
+   "codTema": 68,
+   "tema": "Direito Constitucional",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2345652",
+   "siglaTipo": "PRC",
+   "numero": 2,
+   "ano": 2023,
+   "codTema": 53,
+   "tema": "Processo Legislativo e Atuação Parlamentar",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2345652",
+   "siglaTipo": "PRC",
+   "numero": 2,
+   "ano": 2023,
+   "codTema": 55,
+   "tema": "Relações Internacionais e Comércio Exterior",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2349774",
+   "siglaTipo": "PLV",
+   "numero": 1,
+   "ano": 2023,
+   "codTema": 40,
+   "tema": "Economia",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2349774",
+   "siglaTipo": "PLV",
+   "numero": 1,
+   "ano": 2023,
+   "codTema": 70,
+   "tema": "Finanças Públicas e Orçamento",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2349774",
+   "siglaTipo": "PLV",
+   "numero": 1,
+   "ano": 2023,
+   "codTema": 66,
+   "tema": "Indústria, Comércio e Serviços",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2349947",
+   "siglaTipo": "MPV",
+   "numero": 1164,
+   "ano": 2023,
+   "codTema": 44,
+   "tema": "Direitos Humanos e Minorias",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2349947",
+   "siglaTipo": "MPV",
+   "numero": 1164,
+   "ano": 2023,
+   "codTema": 52,
+   "tema": "Previdência e Assistência Social",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2352476",
+   "siglaTipo": "PEC",
+   "numero": 9,
+   "ano": 2023,
+   "codTema": 44,
+   "tema": "Direitos Humanos e Minorias",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2352476",
+   "siglaTipo": "PEC",
+   "numero": 9,
+   "ano": 2023,
+   "codTema": 70,
+   "tema": "Finanças Públicas e Orçamento",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2352476",
+   "siglaTipo": "PEC",
+   "numero": 9,
+   "ano": 2023,
+   "codTema": 74,
+   "tema": "Política, Partidos e Eleições",
+   "relevancia": 0
+  },
+  {
+   "uriProposicao": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/2357053",
+   "siglaTipo": "PLP",
+   "numero": 93,
+   "ano": 2023,
+   "codTema": 70,
+   "tema": "Finanças Públicas e Orçamento",
+   "relevancia": 0
+  }
+ ]
+}
