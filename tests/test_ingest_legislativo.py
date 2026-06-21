@@ -26,6 +26,11 @@ class _VetosFake:
         return {"raw": ano}, [v]
 
 
+class _CamaraRaising:
+    def fetch(self, ano, client):
+        raise RuntimeError("network error")
+
+
 def test_ingerir_legislativo(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)  # raw/ vai para o tmp
     conn = conectar(":memory:")
@@ -37,3 +42,17 @@ def test_ingerir_legislativo(tmp_path, monkeypatch):
     assert temas_de(conn, "camara_2023") == ["Saúde"]
     assert len(leis_entre(conn, datetime.date(2023, 1, 1), datetime.date(2023, 12, 31))) == 1
     assert len(vetos_entre(conn, datetime.date(2023, 1, 1), datetime.date(2023, 12, 31))) == 1
+
+
+def test_ingerir_legislativo_resiliente(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    agora = "2026-06-21T10:00:00"
+    out = ingerir_legislativo(conn, [2023], None, agora,
+                              camara=_CamaraRaising(), vetos=_VetosFake())
+    assert out == {"leis": 0, "vetos": 1}
+    cur = conn.execute(
+        "SELECT status FROM ingestao_log WHERE serie_id = 'camara_leis_2023'"
+    )
+    assert cur.fetchone()[0] == "erro"

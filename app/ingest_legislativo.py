@@ -27,7 +27,7 @@ def anos_dos_mandatos(mandatos) -> list[int]:
     return sorted(anos)
 
 
-def ingerir_legislativo(conn, anos, client, agora, *, camara=None, vetos=None) -> dict:
+def ingerir_legislativo(conn, anos, client, agora, *, camara=None, vetos=None) -> dict[str, int]:
     camara = camara or CamaraLeisFetcher()
     vetos = vetos or SenadoVetosFetcher()
     total_leis = total_vetos = 0
@@ -46,7 +46,7 @@ def ingerir_legislativo(conn, anos, client, agora, *, camara=None, vetos=None) -
             salvar_raw("SENADO", f"vetos_{ano}", raw_v, agora)
             total_vetos += upsert_vetos(conn, vs)
             registrar_ingestao(conn, f"senado_vetos_{ano}", agora, "ok", len(vs), None)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001 - um ano quebrado não derruba o pipeline
             registrar_ingestao(conn, f"senado_vetos_{ano}", agora, "erro", 0, str(exc))
     return {"leis": total_leis, "vetos": total_vetos}
 
