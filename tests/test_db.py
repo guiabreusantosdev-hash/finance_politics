@@ -241,3 +241,25 @@ def test_vetos_por_intervalo():
     ])
     dentro = vetos_entre(conn, _dt.date(2023, 1, 1), _dt.date(2026, 12, 31))
     assert [v.id for v in dentro] == ["v1"]
+
+
+def test_observacoes_entre_filtra_por_data():
+    import datetime
+
+    from app.db import conectar, criar_schema, observacoes_entre, upsert_observacoes, upsert_serie
+    from app.models import Indicador, Observacao
+
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    ind = Indicador(
+        id="s", fonte="BCB", codigo_fonte="1", nome="n", unidade="u",
+        periodicidade="mensal", eixo="macro", metodo_anual="fim_periodo",
+    )
+    upsert_serie(conn, ind)
+    upsert_observacoes(conn, [
+        Observacao(serie_id="s", data=datetime.date(2021, 6, 1), valor=1.0),
+        Observacao(serie_id="s", data=datetime.date(2023, 6, 1), valor=2.0),
+        Observacao(serie_id="s", data=datetime.date(2026, 6, 1), valor=3.0),
+    ])
+    res = observacoes_entre(conn, "s", datetime.date(2022, 1, 1), datetime.date(2025, 12, 31))
+    assert [o.valor for o in res] == [2.0]

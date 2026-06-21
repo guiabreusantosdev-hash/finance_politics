@@ -129,6 +129,23 @@ def observacoes_da_serie(
     ]
 
 
+def observacoes_entre(
+    conn: sqlite3.Connection,
+    serie_id: str,
+    inicio: datetime.date,
+    fim: datetime.date,
+) -> list[Observacao]:
+    cur = conn.execute(
+        """SELECT serie_id, data, valor FROM observacoes
+           WHERE serie_id = ? AND data >= ? AND data <= ? ORDER BY data""",
+        (serie_id, inicio.isoformat(), fim.isoformat()),
+    )
+    return [
+        Observacao(serie_id=r[0], data=datetime.date.fromisoformat(r[1]), valor=r[2])
+        for r in cur.fetchall()
+    ]
+
+
 def _registro_de_row(row: tuple) -> "ResumoRegistro":
     from app.models import ResumoFactual, ResumoRegistro
 
