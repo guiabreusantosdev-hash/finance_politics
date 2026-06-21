@@ -7,3 +7,6 @@ raw/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Banco SQLite gerado localmente
+*.db
