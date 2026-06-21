@@ -26,6 +26,7 @@
 - id: sidra_6468_desemprego
   fonte: IBGE
   codigo_fonte: "6468"
+  variavel: "4099"
   nome: Taxa de desocupação (PNAD)
   unidade: "%"
   periodicidade: trimestral
