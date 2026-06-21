@@ -159,3 +159,12 @@ def test_payload_ministerial_so_aprovadas():
     assert payload.ano_inicio == 2023 and payload.ano_fim == 2026
     assert payload.ministros == ["Fazenda — Haddad"]
     assert [m.titulo for m in payload.medidas] == ["aprov"]
+
+
+def test_descrever_payload_ministerial():
+    from app.models import PayloadMinisterialGoverno
+    from app.payload import descrever_payload
+
+    p = PayloadMinisterialGoverno(governo="Lula 3", ano_inicio=2023, ano_fim=2026,
+                                  ministros=[], medidas=[])
+    assert descrever_payload(p) == ("ministerial", "Lula 3")

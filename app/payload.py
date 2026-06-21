@@ -13,6 +13,7 @@ from app.models import (
     PayloadAno,
     PayloadComparacao,
     PayloadMandato,
+    PayloadMinisterialGoverno,
     ValorIndicador,
     ValorIndicadorMandato,
 )
@@ -91,17 +92,21 @@ def construir_payload_comparacao(
     )
 
 
-def hash_payload(payload: PayloadAno | PayloadMandato | PayloadComparacao) -> str:
+def hash_payload(
+    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno,
+) -> str:
     return hashlib.sha256(payload.model_dump_json().encode("utf-8")).hexdigest()
 
 
 def descrever_payload(
-    payload: PayloadAno | PayloadMandato | PayloadComparacao,
+    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno,
 ) -> tuple[str, str]:
     if isinstance(payload, PayloadAno):
         return ("ano", str(payload.ano))
     if isinstance(payload, PayloadMandato):
         return ("mandato", payload.mandato)
+    if isinstance(payload, PayloadMinisterialGoverno):
+        return ("ministerial", payload.governo)
     return ("comparacao", f"{payload.mandato_a} × {payload.mandato_b}")
 
 
