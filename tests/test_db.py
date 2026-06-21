@@ -1,16 +1,21 @@
 import datetime
 
 from app.db import (
+    aprovar_medida,
     buscar_resumo_cache,
     conectar,
     criar_schema,
+    descartar_medida,
+    editar_medida,
     historico_resumos,
+    medidas_do_governo,
     observacoes_da_serie,
+    salvar_medida,
     salvar_resumo,
     upsert_observacoes,
     upsert_serie,
 )
-from app.models import Indicador, Observacao, PayloadAno, ResumoFactual
+from app.models import Indicador, Medida, Observacao, PayloadAno, ResumoFactual
 from app.payload import hash_payload
 
 
@@ -133,3 +138,56 @@ def test_salvar_resumo_persiste_veredito_dict():
         "ancorado": True, "neutro": True,
         "numeros_fora_do_payload": [], "observacoes": "ok",
     }
+
+
+def _medida(status="rascunho", origem="curada", titulo="t") -> Medida:
+    return Medida(
+        governo="Lula 3", pasta="Fazenda", ministro="Haddad",
+        titulo=titulo, descricao="d", fonte_url="https://x",
+        status=status, origem=origem,
+    )
+
+
+def test_salvar_e_listar_medida():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    mid = salvar_medida(conn, _medida())
+    assert isinstance(mid, int)
+    todas = medidas_do_governo(conn, "Lula 3")
+    assert len(todas) == 1
+    assert todas[0].titulo == "t"
+    assert todas[0].id == mid
+
+
+def test_filtro_apenas_aprovadas():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    salvar_medida(conn, _medida(status="rascunho", titulo="rasc"))
+    salvar_medida(conn, _medida(status="aprovada", titulo="aprov"))
+    aprovadas = medidas_do_governo(conn, "Lula 3", apenas_aprovadas=True)
+    assert [m.titulo for m in aprovadas] == ["aprov"]
+
+
+def test_aprovar_medida():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    mid = salvar_medida(conn, _medida(status="rascunho"))
+    aprovar_medida(conn, mid)
+    assert medidas_do_governo(conn, "Lula 3", apenas_aprovadas=True)[0].id == mid
+
+
+def test_editar_medida():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    mid = salvar_medida(conn, _medida())
+    editar_medida(conn, mid, titulo="novo", descricao="nd", fonte_url="https://y")
+    m = medidas_do_governo(conn, "Lula 3")[0]
+    assert m.titulo == "novo" and m.fonte_url == "https://y"
+
+
+def test_descartar_medida():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    mid = salvar_medida(conn, _medida())
+    descartar_medida(conn, mid)
+    assert medidas_do_governo(conn, "Lula 3") == []

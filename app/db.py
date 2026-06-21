@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from app.models import Indicador, Observacao
 
 if TYPE_CHECKING:
-    from app.models import ResumoRegistro
+    from app.models import Medida, ResumoRegistro
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS series (
@@ -32,6 +32,12 @@ CREATE TABLE IF NOT EXISTS resumos (
 );
 CREATE INDEX IF NOT EXISTS idx_resumos_lookup
     ON resumos (tipo, identificador, criado_em);
+CREATE TABLE IF NOT EXISTS medidas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    governo TEXT, pasta TEXT, ministro TEXT, titulo TEXT, descricao TEXT,
+    fonte_url TEXT, status TEXT, origem TEXT, criado_em TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_medidas_governo ON medidas (governo, status);
 """
 
 
@@ -187,3 +193,64 @@ def historico_resumos(
         (tipo, identificador),
     )
     return [_registro_de_row(r) for r in cur.fetchall()]
+
+
+_COLS_MEDIDA = (
+    "id, governo, pasta, ministro, titulo, descricao, fonte_url, status, origem, criado_em"
+)
+
+
+def _medida_de_row(row: tuple) -> "Medida":
+    from app.models import Medida
+
+    return Medida(
+        id=row[0], governo=row[1], pasta=row[2], ministro=row[3], titulo=row[4],
+        descricao=row[5], fonte_url=row[6], status=row[7], origem=row[8], criado_em=row[9],
+    )
+
+
+def salvar_medida(conn: sqlite3.Connection, medida) -> int:
+    quando = medida.criado_em or datetime.datetime.now().isoformat()
+    cur = conn.execute(
+        """INSERT INTO medidas (governo, pasta, ministro, titulo, descricao,
+           fonte_url, status, origem, criado_em)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (
+            medida.governo, medida.pasta, medida.ministro, medida.titulo,
+            medida.descricao, medida.fonte_url, medida.status, medida.origem, quando,
+        ),
+    )
+    conn.commit()
+    assert cur.lastrowid is not None
+    return int(cur.lastrowid)
+
+
+def medidas_do_governo(
+    conn: sqlite3.Connection, governo: str, *, apenas_aprovadas: bool = False
+) -> "list[Medida]":
+    sql = f"SELECT {_COLS_MEDIDA} FROM medidas WHERE governo = ?"
+    params: tuple = (governo,)
+    if apenas_aprovadas:
+        sql += " AND status = 'aprovada'"
+    sql += " ORDER BY pasta, id"
+    return [_medida_de_row(r) for r in conn.execute(sql, params).fetchall()]
+
+
+def aprovar_medida(conn: sqlite3.Connection, medida_id: int) -> None:
+    conn.execute("UPDATE medidas SET status = 'aprovada' WHERE id = ?", (medida_id,))
+    conn.commit()
+
+
+def editar_medida(
+    conn: sqlite3.Connection, medida_id: int, *, titulo: str, descricao: str, fonte_url: str
+) -> None:
+    conn.execute(
+        "UPDATE medidas SET titulo = ?, descricao = ?, fonte_url = ? WHERE id = ?",
+        (titulo, descricao, fonte_url, medida_id),
+    )
+    conn.commit()
+
+
+def descartar_medida(conn: sqlite3.Connection, medida_id: int) -> None:
+    conn.execute("DELETE FROM medidas WHERE id = ?", (medida_id,))
+    conn.commit()
