@@ -69,3 +69,18 @@ def test_sidra_mantem_allxp_sem_variavel():
     cap, transport = _captura_url()
     SIDRAFetcher().fetch(_ind(), httpx.Client(transport=transport))
     assert "/v/allxp/" in cap["url"]
+
+
+GINI_FIXTURE = json.loads((pathlib.Path(__file__).parent / "fixtures" / "sidra_7435_gini.json").read_text())
+
+def test_sidra_le_periodo_da_coluna_certa_quando_ha_variavel():
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=GINI_FIXTURE)
+    ind = Indicador(
+        id="ibge_gini", fonte="IBGE", codigo_fonte="7435", nome="Gini",
+        unidade="índice", periodicidade="anual", eixo="social",
+        metodo_anual="fim_periodo", variavel="10681",
+    )
+    raw, obs = SIDRAFetcher().fetch(ind, httpx.Client(transport=httpx.MockTransport(handler)))
+    assert [o.data for o in obs] == [datetime.date(2012, 1, 1), datetime.date(2013, 1, 1)]
+    assert obs[0].valor == 0.540
