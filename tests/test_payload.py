@@ -1,8 +1,14 @@
 import datetime
 
 from app.db import conectar, criar_schema, upsert_observacoes, upsert_serie
-from app.models import Indicador, Mandato, Observacao
-from app.payload import construir_payload_ano, construir_payload_comparacao, construir_payload_mandato
+from app.models import Indicador, Mandato, Observacao, PayloadAno, PayloadComparacao, PayloadMandato
+from app.payload import (
+    construir_payload_ano,
+    construir_payload_comparacao,
+    construir_payload_mandato,
+    descrever_payload,
+    hash_payload,
+)
 
 
 def _ind() -> Indicador:
@@ -92,3 +98,36 @@ def test_payload_mandato_sem_dados_marca_faltante():
     assert ind_val.valor_inicio is None
     assert ind_val.valor_fim is None
     assert ind_val.variacao is None
+
+
+def _payload_ano(ano: int = 2024) -> PayloadAno:
+    return PayloadAno(ano=ano, indicadores=[], faltantes=[])
+
+
+def test_hash_payload_deterministico():
+    p = _payload_ano()
+    assert hash_payload(p) == hash_payload(_payload_ano())
+
+
+def test_hash_payload_muda_com_os_dados():
+    assert hash_payload(_payload_ano(2024)) != hash_payload(_payload_ano(2023))
+
+
+def test_descrever_payload_ano():
+    assert descrever_payload(_payload_ano(2024)) == ("ano", "2024")
+
+
+def test_descrever_payload_mandato():
+    p = PayloadMandato(
+        mandato="Lula 3", ano_inicio=2023, ano_fim=2026, indicadores=[], faltantes=[]
+    )
+    assert descrever_payload(p) == ("mandato", "Lula 3")
+
+
+def test_descrever_payload_comparacao():
+    p = PayloadComparacao(
+        mandato_a="Lula 3", mandato_b="Bolsonaro",
+        ano_inicio_a=2023, ano_fim_a=2026, ano_inicio_b=2019, ano_fim_b=2022,
+        deltas=[],
+    )
+    assert descrever_payload(p) == ("comparacao", "Lula 3 × Bolsonaro")

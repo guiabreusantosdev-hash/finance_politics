@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+import hashlib
 
 from app.calculo import valor_no_mandato, valor_no_periodo, variacao
 from app.db import observacoes_da_serie
@@ -88,3 +89,17 @@ def construir_payload_comparacao(
         ano_fim_b=mand_b.fim.year,
         deltas=deltas,
     )
+
+
+def hash_payload(payload: PayloadAno | PayloadMandato | PayloadComparacao) -> str:
+    return hashlib.sha256(payload.model_dump_json().encode("utf-8")).hexdigest()
+
+
+def descrever_payload(
+    payload: PayloadAno | PayloadMandato | PayloadComparacao,
+) -> tuple[str, str]:
+    if isinstance(payload, PayloadAno):
+        return ("ano", str(payload.ano))
+    if isinstance(payload, PayloadMandato):
+        return ("mandato", payload.mandato)
+    return ("comparacao", f"{payload.mandato_a} × {payload.mandato_b}")
