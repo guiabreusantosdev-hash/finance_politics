@@ -26,6 +26,8 @@ class Indicador(BaseModel):
     periodicidade: Periodicidade
     eixo: Eixo
     metodo_anual: MetodoAnual
+    variavel: str | None = None
+    classificacao: str | None = None
 
 
 class Mandato(BaseModel):
