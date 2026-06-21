@@ -168,3 +168,26 @@ def test_descrever_payload_ministerial():
     p = PayloadMinisterialGoverno(governo="Lula 3", ano_inicio=2023, ano_fim=2026,
                                   ministros=[], medidas=[])
     assert descrever_payload(p) == ("ministerial", "Lula 3")
+
+
+def test_payload_legislativo_e_descricao():
+    import datetime as d
+
+    from app.db import conectar, criar_schema, upsert_lei_temas, upsert_leis, upsert_vetos
+    from app.models import Lei, Mandato, PayloadLegislativoMandato, Veto
+    from app.payload import construir_payload_legislativo, descrever_payload
+
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    upsert_leis(conn, [Lei(id="a", tipo="LO", numero="1", ano=2023,
+                           data=d.date(2023, 2, 1), ementa="e", url="u")])
+    upsert_lei_temas(conn, "a", ["Saúde"])
+    upsert_vetos(conn, [Veto(id="v", data=d.date(2023, 3, 1), tipo="total",
+                             descricao="x", materia="m", url="u")])
+    m = Mandato(nome="Lula 3", inicio=d.date(2023, 1, 1), fim=d.date(2026, 12, 31))
+    p = construir_payload_legislativo(conn, m)
+    assert isinstance(p, PayloadLegislativoMandato)
+    assert p.total_leis == 1 and p.por_tipo == {"LO": 1}
+    assert p.por_tema == {"Saúde": 1}
+    assert p.total_vetos == 1 and p.vetos_por_tipo == {"total": 1}
+    assert descrever_payload(p) == ("legislativo", "Lula 3")

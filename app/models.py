@@ -161,3 +161,14 @@ class Veto(BaseModel):
     descricao: str
     materia: str
     url: str
+
+
+class PayloadLegislativoMandato(BaseModel):
+    mandato: str
+    ano_inicio: int
+    ano_fim: int
+    total_leis: int
+    por_tipo: dict[str, int]
+    por_tema: dict[str, int]
+    total_vetos: int
+    vetos_por_tipo: dict[str, int]

@@ -12,6 +12,7 @@ from app.models import (
     Mandato,
     PayloadAno,
     PayloadComparacao,
+    PayloadLegislativoMandato,
     PayloadMandato,
     PayloadMinisterialGoverno,
     ValorIndicador,
@@ -93,13 +94,13 @@ def construir_payload_comparacao(
 
 
 def hash_payload(
-    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno,
+    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
 ) -> str:
     return hashlib.sha256(payload.model_dump_json().encode("utf-8")).hexdigest()
 
 
 def descrever_payload(
-    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno,
+    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
 ) -> tuple[str, str]:
     if isinstance(payload, PayloadAno):
         return ("ano", str(payload.ano))
@@ -107,6 +108,8 @@ def descrever_payload(
         return ("mandato", payload.mandato)
     if isinstance(payload, PayloadMinisterialGoverno):
         return ("ministerial", payload.governo)
+    if isinstance(payload, PayloadLegislativoMandato):
+        return ("legislativo", payload.mandato)
     return ("comparacao", f"{payload.mandato_a} × {payload.mandato_b}")
 
 
@@ -129,4 +132,27 @@ def construir_payload_ministerial(conn, ministros, mandato):
             )
             for m in aprovadas
         ],
+    )
+
+
+def construir_payload_legislativo(conn, mandato) -> PayloadLegislativoMandato:
+    from app.legislativo import (
+        agregar_por_tema,
+        agregar_por_tipo,
+        agregar_vetos_por_tipo,
+        leis_no_mandato,
+        vetos_no_mandato,
+    )
+
+    leis = leis_no_mandato(conn, mandato)
+    vetos = vetos_no_mandato(conn, mandato)
+    return PayloadLegislativoMandato(
+        mandato=mandato.nome,
+        ano_inicio=mandato.inicio.year,
+        ano_fim=mandato.fim.year,
+        total_leis=len(leis),
+        por_tipo=agregar_por_tipo(leis),
+        por_tema=agregar_por_tema(conn, leis),
+        total_vetos=len(vetos),
+        vetos_por_tipo=agregar_vetos_por_tipo(vetos),
     )

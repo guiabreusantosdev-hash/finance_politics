@@ -281,3 +281,27 @@ def test_guard_ministerial_rejeita_estatistica_inventada():
         raise AssertionError("deveria ter levantado GuardError")
     except GuardError:
         pass
+
+
+def test_guard_legislativo_permite_contagens():
+    from app.guard import GuardError, verificar
+    from app.models import Afirmacao, PayloadLegislativoMandato, ResumoFactual
+
+    p = PayloadLegislativoMandato(
+        mandato="Lula 3", ano_inicio=2023, ano_fim=2026, total_leis=5,
+        por_tipo={"LO": 5}, por_tema={"Saúde": 2}, total_vetos=3, vetos_por_tipo={"total": 3},
+    )
+    ok = ResumoFactual(
+        paragrafos_por_eixo={"producao": "Foram 5 leis e 3 vetos."},
+        afirmacoes=[Afirmacao(texto="leis", valor_citado=5, fonte="Câmara")],
+    )
+    verificar(ok, p)  # não levanta
+    ruim = ResumoFactual(
+        paragrafos_por_eixo={"producao": "Foram 99 leis."},
+        afirmacoes=[Afirmacao(texto="x", valor_citado=99, fonte="f")],
+    )
+    try:
+        verificar(ruim, p)
+        raise AssertionError("deveria levantar")
+    except GuardError:
+        pass
