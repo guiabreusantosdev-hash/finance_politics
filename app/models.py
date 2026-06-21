@@ -93,3 +93,14 @@ class Afirmacao(BaseModel):
 class ResumoFactual(BaseModel):
     paragrafos_por_eixo: dict[str, str]
     afirmacoes: list[Afirmacao]
+
+
+class ResumoRegistro(BaseModel):
+    id: int
+    tipo: str
+    identificador: str
+    payload_hash: str
+    resumo: ResumoFactual
+    veredito: dict | None
+    modelo: str
+    criado_em: str

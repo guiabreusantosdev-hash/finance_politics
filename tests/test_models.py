@@ -1,6 +1,6 @@
 import datetime
 
-from app.models import Indicador, Observacao, PayloadAno, ResumoFactual, ValorIndicador
+from app.models import Indicador, Observacao, PayloadAno, ResumoFactual, ResumoRegistro, ValorIndicador
 
 
 def test_observacao_roundtrip():
@@ -31,3 +31,18 @@ def test_payload_ano_holds_faltantes():
 def test_resumo_factual_structure():
     r = ResumoFactual(paragrafos_por_eixo={"macro": "txt"}, afirmacoes=[])
     assert r.paragrafos_por_eixo["macro"] == "txt"
+
+
+def test_resumo_registro_aceita_veredito_none():
+    reg = ResumoRegistro(
+        id=1,
+        tipo="ano",
+        identificador="2024",
+        payload_hash="abc",
+        resumo=ResumoFactual(paragrafos_por_eixo={"macro": "x"}, afirmacoes=[]),
+        veredito=None,
+        modelo="claude-code-default",
+        criado_em="2026-06-21T00:00:00",
+    )
+    assert reg.veredito is None
+    assert reg.resumo.paragrafos_por_eixo["macro"] == "x"
