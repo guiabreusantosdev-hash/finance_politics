@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-from app.models import PayloadAno, PayloadComparacao, PayloadMandato, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadMandato, PayloadMinisterialGoverno, ResumoFactual
 
 _NUM = re.compile(r"(?<![.\d])-?\d+(?:[.\s]\d{3})*(?:[.,]\d+)?")
 
@@ -55,9 +55,13 @@ def extrair_numeros(texto: str) -> list[float]:
     return [v for v, _ in _extrair_numeros_com_tipo(texto)]
 
 
-def numeros_permitidos(payload: PayloadAno | PayloadComparacao | PayloadMandato) -> set[float]:
+def numeros_permitidos(payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno) -> set[float]:
     """Return ONLY genuine payload numbers — no small-integer allowlist."""
     nums: set[float] = set()
+    if isinstance(payload, PayloadMinisterialGoverno):
+        nums.add(float(payload.ano_inicio))
+        nums.add(float(payload.ano_fim))
+        return nums
     if isinstance(payload, PayloadAno):
         nums.add(float(payload.ano))
         for vi in payload.indicadores:
@@ -88,7 +92,7 @@ def _proximo(alvo: float, permitidos: set[float], tol: float) -> bool:
 
 def verificar(
     resumo: ResumoFactual,
-    payload: PayloadAno | PayloadComparacao | PayloadMandato,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno,
     tolerancia: float = 0.05,
 ) -> None:
     permitidos = numeros_permitidos(payload)

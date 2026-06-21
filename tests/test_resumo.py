@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from app.models import PayloadAno, ValorIndicador
-from app.resumo import gerar_resumo, montar_prompt
+from app.models import PayloadAno, PayloadMinisterialGoverno, ValorIndicador
+from app.resumo import _REGRAS_MINISTERIAL, gerar_resumo, montar_prompt
 
 
 def _payload() -> PayloadAno:
@@ -49,3 +49,11 @@ def test_gerar_resumo_rejeita_alucinacao_e_esgota_tentativas():
     with pytest.raises(ValueError):
         gerar_resumo(client, _payload(), tentativas=2)
     assert client.chamadas == 2
+
+
+def test_montar_prompt_aceita_regras_ministeriais():
+    p = PayloadMinisterialGoverno(governo="Lula 3", ano_inicio=2023, ano_fim=2026,
+                                  ministros=[], medidas=[])
+    prompt = montar_prompt(p, _REGRAS_MINISTERIAL)
+    assert "ministro" in prompt.lower()
+    assert "Lula 3" in prompt

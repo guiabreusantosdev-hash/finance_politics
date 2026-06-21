@@ -4,9 +4,11 @@ from app.guard import GuardError, extrair_numeros, numeros_permitidos, verificar
 from app.models import (
     Afirmacao,
     DeltaIndicador,
+    MedidaResumo,
     PayloadAno,
     PayloadComparacao,
     PayloadMandato,
+    PayloadMinisterialGoverno,
     ResumoFactual,
     ValorIndicador,
     ValorIndicadorMandato,
@@ -250,3 +252,32 @@ def test_resumo_mandato_alucinado_falha():
     )
     with pytest.raises(GuardError):
         verificar(resumo, p)
+
+
+def _payload_min() -> PayloadMinisterialGoverno:
+    return PayloadMinisterialGoverno(
+        governo="Lula 3", ano_inicio=2023, ano_fim=2026,
+        ministros=["Fazenda — Haddad"],
+        medidas=[MedidaResumo(pasta="Fazenda", ministro="Haddad",
+                              titulo="t", descricao="d", fonte_url="https://x")],
+    )
+
+
+def test_guard_ministerial_aceita_texto_sem_numeros():
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"Fazenda": "O ministro conduziu a política fiscal."},
+        afirmacoes=[],
+    )
+    verificar(resumo, _payload_min())  # não levanta
+
+
+def test_guard_ministerial_rejeita_estatistica_inventada():
+    resumo = ResumoFactual(
+        paragrafos_por_eixo={"Fazenda": "Reduziu a inflação em 3,5%."},
+        afirmacoes=[],
+    )
+    try:
+        verificar(resumo, _payload_min())
+        raise AssertionError("deveria ter levantado GuardError")
+    except GuardError:
+        pass

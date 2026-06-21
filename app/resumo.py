@@ -5,7 +5,7 @@ import json
 
 from app.guard import GuardError, verificar
 from app.llm import LLMClient
-from app.models import PayloadAno, PayloadComparacao, PayloadMandato, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadMandato, PayloadMinisterialGoverno, ResumoFactual
 
 _REGRAS = (
     "Você redige um resumo FACTUAL e NEUTRO sobre indicadores de um governo. "
@@ -17,17 +17,28 @@ _REGRAS = (
     '"afirmacoes": [{"texto": str, "valor_citado": number, "fonte": str}]}.'
 )
 
+_REGRAS_MINISTERIAL = (
+    "Você redige um resumo FACTUAL e NEUTRO sobre os ministros de um governo e suas "
+    "medidas. REGRAS: (1) use SOMENTE as medidas fornecidas no payload; NUNCA invente "
+    "medidas, números ou fontes. (2) Cite a fonte (fonte_url) de cada afirmação. (3) Sem "
+    "juízo de valor, sem dizer se foi bom ou ruim, sem causação especulativa. (4) Emenda "
+    "Constitucional é promulgada pelo Congresso, não sancionada — não atribua ao ministro. "
+    "(5) Deixe 'afirmacoes' como lista vazia (não há números a citar). Responda APENAS com "
+    'JSON no schema: {"paragrafos_por_eixo": {<pasta>: str}, "afirmacoes": []}.'
+)
 
-def montar_prompt(payload: PayloadAno | PayloadComparacao | PayloadMandato) -> str:
-    return f"{_REGRAS}\n\nPAYLOAD:\n{payload.model_dump_json(indent=2)}"
+
+def montar_prompt(payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno, regras: str = _REGRAS) -> str:
+    return f"{regras}\n\nPAYLOAD:\n{payload.model_dump_json(indent=2)}"
 
 
 def gerar_resumo(
     client: LLMClient,
-    payload: PayloadAno | PayloadComparacao | PayloadMandato,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno,
     tentativas: int = 3,
+    regras: str = _REGRAS,
 ) -> ResumoFactual:
-    prompt = montar_prompt(payload)
+    prompt = montar_prompt(payload, regras)
     erro: Exception | None = None
     for _ in range(tentativas):
         bruto = client.gerar(prompt)
