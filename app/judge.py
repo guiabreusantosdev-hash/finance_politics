@@ -6,7 +6,7 @@ import json
 from pydantic import BaseModel
 
 from app.llm import LLMClient
-from app.models import PayloadAno, PayloadComparacao, PayloadMandato, ResumoFactual
+from app.models import PayloadAno, PayloadComparacao, PayloadMandato, PayloadMinisterialGoverno, ResumoFactual
 
 _INSTRUCAO = (
     "Você é um JUIZ rigoroso. Dado um PAYLOAD de dados e um RESUMO, verifique: "
@@ -26,7 +26,7 @@ class Veredito(BaseModel):
 
 def julgar(
     client: LLMClient,
-    payload: PayloadAno | PayloadComparacao | PayloadMandato,
+    payload: PayloadAno | PayloadComparacao | PayloadMandato | PayloadMinisterialGoverno,
     resumo: ResumoFactual,
 ) -> Veredito:
     prompt = (

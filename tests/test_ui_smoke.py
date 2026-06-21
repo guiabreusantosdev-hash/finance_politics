@@ -32,3 +32,14 @@ def test_ui_importa_helpers_de_persistencia():
     assert "buscar_resumo_cache" in src
     assert "salvar_resumo" in src
     assert "historico_resumos" in src
+
+
+def test_ui_tem_aba_ministros():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "Ministros" in src
+    assert "construir_payload_ministerial" in src
+    assert "rascunhar_medidas" in src

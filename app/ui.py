@@ -1,4 +1,4 @@
-"""Streamlit UI: three tabs (por ano / por mandato / comparação)."""
+"""Streamlit UI: four tabs (por ano / por mandato / comparação / ministros)."""
 from __future__ import annotations
 
 import pandas as pd
@@ -32,7 +32,9 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     conn = conectar()
     criar_schema(conn)
 
-    aba_ano, aba_mandato, aba_comp = st.tabs(["Por ano", "Por mandato", "Comparação"])
+    aba_ano, aba_mandato, aba_comp, aba_min = st.tabs(
+        ["Por ano", "Por mandato", "Comparação", "Ministros"]
+    )
 
     with aba_ano:
         ano = st.number_input("Ano", min_value=2003, max_value=2026, value=2024, step=1)
@@ -69,12 +71,71 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         st.dataframe(pd.DataFrame([d.model_dump() for d in payload_c.deltas]))
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_c)
 
+    with aba_min:
+        from app.db import (
+            aprovar_medida,
+            descartar_medida,
+            medidas_do_governo,
+            salvar_medida,
+        )
+        from app.medidas_ia import rascunhar_medidas
+        from app.ministros import carregar_ministros, ministros_do_governo
+        from app.payload import construir_payload_ministerial
+
+        ministros = carregar_ministros()
+        nome_g = st.selectbox("Governo", [m.nome for m in mandatos], key="gov_min")
+        mandato_g = next(m for m in mandatos if m.nome == nome_g)
+        do_gov = ministros_do_governo(ministros, nome_g)
+
+        st.subheader("Ministros")
+        st.dataframe(pd.DataFrame([
+            {"pasta": m.pasta, "nome": m.nome, "início": m.inicio,
+             "fim": m.fim, "fonte": m.fonte}
+            for m in do_gov
+        ]))
+
+        st.subheader("Medidas aprovadas")
+        aprovadas = medidas_do_governo(conn, nome_g, apenas_aprovadas=True)
+        if aprovadas:
+            st.dataframe(pd.DataFrame([
+                {"pasta": m.pasta, "ministro": m.ministro, "título": m.titulo,
+                 "descrição": m.descricao, "fonte": m.fonte_url}
+                for m in aprovadas
+            ]))
+        else:
+            st.caption("Nenhuma medida aprovada ainda.")
+
+        st.subheader("Sugerir medidas (IA)")
+        nomes_min = [f"{m.pasta} — {m.nome}" for m in do_gov]
+        if nomes_min:
+            escolha = st.selectbox("Ministro", nomes_min, key="min_ia")
+            ministro_sel = do_gov[nomes_min.index(escolha)]
+            if st.button("Sugerir medidas (IA)", key="btn_ia"):
+                try:
+                    rascunhos = rascunhar_medidas(ClaudeCodeClient(), ministro_sel)
+                    for r in rascunhos:
+                        st.warning(f"RASCUNHO (não verificado): {r.titulo}")
+                        st.write(r.descricao)
+                        st.write(r.fonte_url)
+                        novo_id = salvar_medida(conn, r)
+                        if st.button(f"Aprovar #{novo_id}", key=f"apr_{novo_id}"):
+                            aprovar_medida(conn, novo_id)
+                        if st.button(f"Descartar #{novo_id}", key=f"desc_{novo_id}"):
+                            descartar_medida(conn, novo_id)
+                except Exception as exc:
+                    st.error(f"Não foi possível sugerir medidas: {exc}")
+
+        st.subheader("Resumo do governo")
+        payload_min = construir_payload_ministerial(conn, ministros, mandato_g)
+        _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_min)
+
 
 def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
     from app.db import buscar_resumo_cache, historico_resumos, salvar_resumo
     from app.judge import julgar
+    from app.models import PayloadMinisterialGoverno
     from app.payload import descrever_payload, hash_payload
-    from app.resumo import gerar_resumo
+    from app.resumo import _REGRAS_MINISTERIAL, gerar_resumo
 
     ph = hash_payload(payload)
     tipo, identificador = descrever_payload(payload)
@@ -88,7 +149,7 @@ def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
 
     if st.button(label, key=f"btn_{tipo}_{identificador}"):
         try:
-            resumo = gerar_resumo(client, payload)
+            resumo = gerar_resumo(client, payload, regras=_REGRAS_MINISTERIAL) if isinstance(payload, PayloadMinisterialGoverno) else gerar_resumo(client, payload)
             veredito = None
             try:
                 veredito = julgar(client, payload, resumo)
