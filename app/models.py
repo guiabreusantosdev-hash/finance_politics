@@ -142,3 +142,22 @@ class PayloadMinisterialGoverno(BaseModel):
     ano_fim: int
     ministros: list[str]
     medidas: list[MedidaResumo]
+
+
+class Lei(BaseModel):
+    id: str
+    tipo: str            # LO | LC | MP | EC
+    numero: str
+    ano: int
+    data: datetime.date
+    ementa: str
+    url: str
+
+
+class Veto(BaseModel):
+    id: str
+    data: datetime.date
+    tipo: str            # total | parcial
+    descricao: str
+    materia: str
+    url: str

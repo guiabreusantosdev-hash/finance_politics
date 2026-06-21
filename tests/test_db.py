@@ -1,4 +1,5 @@
 import datetime
+import datetime as _dt
 
 from app.db import (
     aprovar_medida,
@@ -8,14 +9,20 @@ from app.db import (
     descartar_medida,
     editar_medida,
     historico_resumos,
+    leis_entre,
     medidas_do_governo,
     observacoes_da_serie,
     salvar_medida,
     salvar_resumo,
+    temas_de,
+    upsert_lei_temas,
+    upsert_leis,
     upsert_observacoes,
     upsert_serie,
+    upsert_vetos,
+    vetos_entre,
 )
-from app.models import Indicador, Medida, Observacao, PayloadAno, ResumoFactual
+from app.models import Indicador, Lei, Medida, Observacao, PayloadAno, ResumoFactual, Veto
 from app.payload import hash_payload
 
 
@@ -191,3 +198,46 @@ def test_descartar_medida():
     mid = salvar_medida(conn, _medida())
     descartar_medida(conn, mid)
     assert medidas_do_governo(conn, "Lula 3") == []
+
+
+def _lei(id="camara_1", ano=2023, mes=6) -> Lei:
+    return Lei(id=id, tipo="LO", numero="14.500", ano=ano,
+               data=_dt.date(ano, mes, 1), ementa="e", url="https://x")
+
+
+def test_upsert_e_consulta_leis_por_intervalo():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    upsert_leis(conn, [_lei("a", 2023), _lei("b", 2019)])
+    dentro = leis_entre(conn, _dt.date(2023, 1, 1), _dt.date(2026, 12, 31))
+    assert [x.id for x in dentro] == ["a"]
+
+
+def test_upsert_leis_idempotente():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    upsert_leis(conn, [_lei("a")])
+    upsert_leis(conn, [_lei("a")])
+    assert len(leis_entre(conn, _dt.date(2023, 1, 1), _dt.date(2023, 12, 31))) == 1
+
+
+def test_temas_roundtrip():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    upsert_leis(conn, [_lei("a")])
+    upsert_lei_temas(conn, "a", ["Saúde", "Economia"])
+    upsert_lei_temas(conn, "a", ["Saúde", "Economia"])  # idempotente
+    assert sorted(temas_de(conn, "a")) == ["Economia", "Saúde"]
+
+
+def test_vetos_por_intervalo():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    upsert_vetos(conn, [
+        Veto(id="v1", data=_dt.date(2023, 5, 1), tipo="parcial",
+             descricao="d", materia="Lei X", url="https://x"),
+        Veto(id="v2", data=_dt.date(2018, 5, 1), tipo="total",
+             descricao="d", materia="Lei Y", url="https://y"),
+    ])
+    dentro = vetos_entre(conn, _dt.date(2023, 1, 1), _dt.date(2026, 12, 31))
+    assert [v.id for v in dentro] == ["v1"]

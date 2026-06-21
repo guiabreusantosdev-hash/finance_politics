@@ -38,6 +38,18 @@ CREATE TABLE IF NOT EXISTS medidas (
     fonte_url TEXT, status TEXT, origem TEXT, criado_em TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_medidas_governo ON medidas (governo, status);
+CREATE TABLE IF NOT EXISTS leis (
+    id TEXT PRIMARY KEY, tipo TEXT, numero TEXT, ano INTEGER,
+    data TEXT, ementa TEXT, url TEXT
+);
+CREATE TABLE IF NOT EXISTS vetos (
+    id TEXT PRIMARY KEY, data TEXT, tipo TEXT, descricao TEXT, materia TEXT, url TEXT
+);
+CREATE TABLE IF NOT EXISTS lei_temas (
+    lei_id TEXT, tema TEXT,
+    PRIMARY KEY (lei_id, tema),
+    FOREIGN KEY (lei_id) REFERENCES leis(id)
+);
 """
 
 
@@ -254,3 +266,72 @@ def editar_medida(
 def descartar_medida(conn: sqlite3.Connection, medida_id: int) -> None:
     conn.execute("DELETE FROM medidas WHERE id = ?", (medida_id,))
     conn.commit()
+
+
+def upsert_leis(conn: sqlite3.Connection, leis) -> int:
+    rows = [(x.id, x.tipo, x.numero, x.ano, x.data.isoformat(), x.ementa, x.url) for x in leis]
+    conn.executemany(
+        """INSERT INTO leis (id, tipo, numero, ano, data, ementa, url)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(id) DO UPDATE SET tipo=excluded.tipo, numero=excluded.numero,
+             ano=excluded.ano, data=excluded.data, ementa=excluded.ementa, url=excluded.url""",
+        rows,
+    )
+    conn.commit()
+    return len(rows)
+
+
+def upsert_vetos(conn: sqlite3.Connection, vetos) -> int:
+    rows = [(v.id, v.data.isoformat(), v.tipo, v.descricao, v.materia, v.url) for v in vetos]
+    conn.executemany(
+        """INSERT INTO vetos (id, data, tipo, descricao, materia, url)
+           VALUES (?, ?, ?, ?, ?, ?)
+           ON CONFLICT(id) DO UPDATE SET data=excluded.data, tipo=excluded.tipo,
+             descricao=excluded.descricao, materia=excluded.materia, url=excluded.url""",
+        rows,
+    )
+    conn.commit()
+    return len(rows)
+
+
+def upsert_lei_temas(conn: sqlite3.Connection, lei_id: str, temas) -> int:
+    rows = [(lei_id, t) for t in temas]
+    conn.executemany(
+        "INSERT OR IGNORE INTO lei_temas (lei_id, tema) VALUES (?, ?)", rows
+    )
+    conn.commit()
+    return len(rows)
+
+
+def _lei_de_row(r: tuple):
+    from app.models import Lei
+    return Lei(id=r[0], tipo=r[1], numero=r[2], ano=r[3],
+               data=datetime.date.fromisoformat(r[4]), ementa=r[5], url=r[6])
+
+
+def leis_entre(conn: sqlite3.Connection, inicio, fim):
+    cur = conn.execute(
+        """SELECT id, tipo, numero, ano, data, ementa, url FROM leis
+           WHERE data >= ? AND data <= ? ORDER BY data""",
+        (inicio.isoformat(), fim.isoformat()),
+    )
+    return [_lei_de_row(r) for r in cur.fetchall()]
+
+
+def vetos_entre(conn: sqlite3.Connection, inicio, fim):
+    from app.models import Veto
+    cur = conn.execute(
+        """SELECT id, data, tipo, descricao, materia, url FROM vetos
+           WHERE data >= ? AND data <= ? ORDER BY data""",
+        (inicio.isoformat(), fim.isoformat()),
+    )
+    return [
+        Veto(id=r[0], data=datetime.date.fromisoformat(r[1]), tipo=r[2],
+             descricao=r[3], materia=r[4], url=r[5])
+        for r in cur.fetchall()
+    ]
+
+
+def temas_de(conn: sqlite3.Connection, lei_id: str) -> list[str]:
+    cur = conn.execute("SELECT tema FROM lei_temas WHERE lei_id = ?", (lei_id,))
+    return [r[0] for r in cur.fetchall()]
