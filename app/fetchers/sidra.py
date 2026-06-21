@@ -9,7 +9,8 @@ import httpx
 from app.models import Indicador, Observacao
 
 URL_SIDRA = (
-    "https://apisidra.ibge.gov.br/values/t/{tabela}/n1/all/v/allxp/p/all?formato=json"
+    "https://apisidra.ibge.gov.br/values/t/{tabela}/n1/all/v/{variavel}/p/all{classif}?"
+    "formato=json"
 )
 
 
@@ -24,7 +25,12 @@ def _periodo_para_data(p: str) -> datetime.date:
 
 class SIDRAFetcher:
     def fetch(self, ind: Indicador, client: httpx.Client) -> tuple[Any, list[Observacao]]:
-        resp = client.get(URL_SIDRA.format(tabela=ind.codigo_fonte), timeout=60)
+        variavel = ind.variavel or "allxp"
+        classif = f"/{ind.classificacao}" if ind.classificacao else ""
+        url = URL_SIDRA.format(
+            tabela=ind.codigo_fonte, variavel=variavel, classif=classif
+        )
+        resp = client.get(url, timeout=60)
         resp.raise_for_status()
         raw = resp.json()
         out: list[Observacao] = []
