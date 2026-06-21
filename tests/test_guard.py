@@ -283,6 +283,24 @@ def test_guard_ministerial_rejeita_estatistica_inventada():
         pass
 
 
+def test_guard_aceita_payload_periodo():
+    from app.guard import numeros_permitidos
+    from app.models import PayloadPeriodo, ValorIndicadorMandato
+
+    p = PayloadPeriodo(
+        ano_inicio=2022, ano_fim=2025,
+        indicadores=[ValorIndicadorMandato(
+            nome="Selic", valor_inicio=13.75, valor_fim=10.5,
+            variacao=-23.6, unidade="% a.a.", fonte="BCB",
+        )],
+        faltantes=[],
+    )
+    nums = numeros_permitidos(p)
+    assert 13.75 in nums
+    assert 10.5 in nums
+    assert 2022.0 in nums
+
+
 def test_guard_legislativo_permite_contagens():
     from app.guard import GuardError, verificar
     from app.models import Afirmacao, PayloadLegislativoMandato, ResumoFactual

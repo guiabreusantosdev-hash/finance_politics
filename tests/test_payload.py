@@ -170,6 +170,35 @@ def test_descrever_payload_ministerial():
     assert descrever_payload(p) == ("ministerial", "Lula 3")
 
 
+def test_payload_periodo_calcula_inicio_fim_e_variacao():
+    from app.models import PayloadPeriodo
+    from app.payload import construir_payload_periodo
+
+    conn = _conn_com_dados()  # tem 2014->11.75 e 2018->6.5
+    p = construir_payload_periodo(conn, [_ind()], 2014, 2018)
+    assert isinstance(p, PayloadPeriodo)
+    vi = p.indicadores[0]
+    assert vi.valor_inicio == 11.75
+    assert vi.valor_fim == 6.5
+    assert vi.variacao is not None
+
+
+def test_payload_periodo_marca_faltante():
+    from app.payload import construir_payload_periodo
+
+    conn = _conn_com_dados()
+    p = construir_payload_periodo(conn, [_ind()], 2090, 2099)
+    assert "Meta Selic" in p.faltantes
+
+
+def test_descrever_payload_periodo():
+    from app.payload import construir_payload_periodo, descrever_payload
+
+    conn = _conn_com_dados()
+    p = construir_payload_periodo(conn, [_ind()], 2014, 2018)
+    assert descrever_payload(p) == ("periodo", "2014-2018")
+
+
 def test_payload_legislativo_e_descricao():
     import datetime as d
 

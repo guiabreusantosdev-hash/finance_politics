@@ -15,6 +15,7 @@ from app.models import (
     PayloadLegislativoMandato,
     PayloadMandato,
     PayloadMinisterialGoverno,
+    PayloadPeriodo,
     ValorIndicador,
     ValorIndicadorMandato,
 )
@@ -69,6 +70,28 @@ def construir_payload_mandato(
     )
 
 
+def construir_payload_periodo(
+    conn, indicadores: list[Indicador], ano_inicio: int, ano_fim: int
+) -> PayloadPeriodo:
+    valores: list[ValorIndicadorMandato] = []
+    faltantes: list[str] = []
+    for ind in indicadores:
+        obs = observacoes_da_serie(conn, ind.id)
+        v_inicio = valor_no_periodo(obs, ind, ano_inicio)
+        v_fim = valor_no_periodo(obs, ind, ano_fim)
+        var = variacao(v_inicio, v_fim)
+        if v_inicio is None and v_fim is None:
+            faltantes.append(ind.nome)
+        valores.append(ValorIndicadorMandato(
+            nome=ind.nome, valor_inicio=v_inicio, valor_fim=v_fim,
+            variacao=var, unidade=ind.unidade, fonte=ind.fonte,
+        ))
+    return PayloadPeriodo(
+        ano_inicio=ano_inicio, ano_fim=ano_fim,
+        indicadores=valores, faltantes=faltantes,
+    )
+
+
 def construir_payload_comparacao(
     conn, indicadores: list[Indicador], mand_a: Mandato, mand_b: Mandato
 ) -> PayloadComparacao:
@@ -94,18 +117,20 @@ def construir_payload_comparacao(
 
 
 def hash_payload(
-    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
+    payload: PayloadAno | PayloadMandato | PayloadPeriodo | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
 ) -> str:
     return hashlib.sha256(payload.model_dump_json().encode("utf-8")).hexdigest()
 
 
 def descrever_payload(
-    payload: PayloadAno | PayloadMandato | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
+    payload: PayloadAno | PayloadMandato | PayloadPeriodo | PayloadComparacao | PayloadMinisterialGoverno | PayloadLegislativoMandato,
 ) -> tuple[str, str]:
     if isinstance(payload, PayloadAno):
         return ("ano", str(payload.ano))
     if isinstance(payload, PayloadMandato):
         return ("mandato", payload.mandato)
+    if isinstance(payload, PayloadPeriodo):
+        return ("periodo", f"{payload.ano_inicio}-{payload.ano_fim}")
     if isinstance(payload, PayloadMinisterialGoverno):
         return ("ministerial", payload.governo)
     if isinstance(payload, PayloadLegislativoMandato):

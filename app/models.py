@@ -86,6 +86,13 @@ class PayloadMandato(BaseModel):
     faltantes: list[str]
 
 
+class PayloadPeriodo(BaseModel):
+    ano_inicio: int
+    ano_fim: int
+    indicadores: list[ValorIndicadorMandato]
+    faltantes: list[str]
+
+
 class Afirmacao(BaseModel):
     texto: str
     valor_citado: float
