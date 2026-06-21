@@ -1,11 +1,13 @@
 import datetime
+import datetime as _dt
 
-from app.db import conectar, criar_schema, upsert_observacoes, upsert_serie
-from app.models import Indicador, Mandato, Observacao, PayloadAno, PayloadComparacao, PayloadMandato
+from app.db import conectar, criar_schema, salvar_medida, upsert_observacoes, upsert_serie
+from app.models import Indicador, Mandato, Medida, Ministro, Observacao, PayloadAno, PayloadComparacao, PayloadMandato, PayloadMinisterialGoverno
 from app.payload import (
     construir_payload_ano,
     construir_payload_comparacao,
     construir_payload_mandato,
+    construir_payload_ministerial,
     descrever_payload,
     hash_payload,
 )
@@ -131,3 +133,29 @@ def test_descrever_payload_comparacao():
         deltas=[],
     )
     assert descrever_payload(p) == ("comparacao", "Lula 3 × Bolsonaro")
+
+
+def _mandato_lula3() -> Mandato:
+    return Mandato(nome="Lula 3", inicio=_dt.date(2023, 1, 1), fim=_dt.date(2026, 12, 31))
+
+
+def _ministro_haddad() -> Ministro:
+    return Ministro(governo="Lula 3", pasta="Fazenda", nome="Haddad",
+                    inicio=_dt.date(2023, 1, 1), fim=None, fonte="x")
+
+
+def test_payload_ministerial_so_aprovadas():
+    conn = conectar(":memory:")
+    criar_schema(conn)
+    salvar_medida(conn, Medida(governo="Lula 3", pasta="Fazenda", ministro="Haddad",
+                               titulo="aprov", descricao="d", fonte_url="https://a",
+                               status="aprovada", origem="curada"))
+    salvar_medida(conn, Medida(governo="Lula 3", pasta="Fazenda", ministro="Haddad",
+                               titulo="rasc", descricao="d", fonte_url="https://b",
+                               status="rascunho", origem="ia"))
+    payload = construir_payload_ministerial(conn, [_ministro_haddad()], _mandato_lula3())
+    assert isinstance(payload, PayloadMinisterialGoverno)
+    assert payload.governo == "Lula 3"
+    assert payload.ano_inicio == 2023 and payload.ano_fim == 2026
+    assert payload.ministros == ["Fazenda — Haddad"]
+    assert [m.titulo for m in payload.medidas] == ["aprov"]

@@ -103,3 +103,25 @@ def descrever_payload(
     if isinstance(payload, PayloadMandato):
         return ("mandato", payload.mandato)
     return ("comparacao", f"{payload.mandato_a} × {payload.mandato_b}")
+
+
+def construir_payload_ministerial(conn, ministros, mandato):
+    from app.db import medidas_do_governo
+    from app.ministros import ministros_do_governo
+    from app.models import MedidaResumo, PayloadMinisterialGoverno
+
+    do_gov = ministros_do_governo(ministros, mandato.nome)
+    aprovadas = medidas_do_governo(conn, mandato.nome, apenas_aprovadas=True)
+    return PayloadMinisterialGoverno(
+        governo=mandato.nome,
+        ano_inicio=mandato.inicio.year,
+        ano_fim=mandato.fim.year,
+        ministros=[f"{m.pasta} — {m.nome}" for m in do_gov],
+        medidas=[
+            MedidaResumo(
+                pasta=m.pasta, ministro=m.ministro, titulo=m.titulo,
+                descricao=m.descricao, fonte_url=m.fonte_url,
+            )
+            for m in aprovadas
+        ],
+    )

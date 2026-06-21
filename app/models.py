@@ -126,3 +126,19 @@ class Medida(BaseModel):
     status: str   # 'rascunho' | 'aprovada'
     origem: str   # 'curada' | 'ia'
     criado_em: str | None = None
+
+
+class MedidaResumo(BaseModel):
+    pasta: str
+    ministro: str
+    titulo: str
+    descricao: str
+    fonte_url: str
+
+
+class PayloadMinisterialGoverno(BaseModel):
+    governo: str
+    ano_inicio: int
+    ano_fim: int
+    ministros: list[str]
+    medidas: list[MedidaResumo]
