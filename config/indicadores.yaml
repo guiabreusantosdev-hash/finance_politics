@@ -4,7 +4,7 @@
   codigo_fonte: "432"
   nome: Meta Selic
   unidade: "% a.a."
-  periodicidade: mensal
+  periodicidade: diaria
   eixo: macro
   metodo_anual: fim_periodo
 - id: bcb_433_ipca
@@ -31,9 +31,10 @@
   periodicidade: trimestral
   eixo: macro
   metodo_anual: media
-- id: ipea_pib_real_var
-  fonte: IPEA
-  codigo_fonte: "PIB_real_var"
+- id: ibge_pib_real_var
+  fonte: IBGE
+  codigo_fonte: "6784"
+  variavel: "9810"
   nome: PIB real (variação anual)
   unidade: "%"
   periodicidade: anual
@@ -55,9 +56,10 @@
   periodicidade: mensal
   eixo: fiscal
   metodo_anual: fim_periodo
-- id: ipea_gini
-  fonte: IPEA
-  codigo_fonte: "GINI"
+- id: ibge_gini
+  fonte: IBGE
+  codigo_fonte: "7435"
+  variavel: "10681"
   nome: Índice de Gini
   unidade: índice
   periodicidade: anual
