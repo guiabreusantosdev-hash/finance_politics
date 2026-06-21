@@ -104,3 +104,25 @@ class ResumoRegistro(BaseModel):
     veredito: dict | None
     modelo: str
     criado_em: str
+
+
+class Ministro(BaseModel):
+    governo: str
+    pasta: str
+    nome: str
+    inicio: datetime.date
+    fim: datetime.date | None
+    fonte: str
+
+
+class Medida(BaseModel):
+    id: int | None = None
+    governo: str
+    pasta: str
+    ministro: str
+    titulo: str
+    descricao: str
+    fonte_url: str
+    status: str   # 'rascunho' | 'aprovada'
+    origem: str   # 'curada' | 'ia'
+    criado_em: str | None = None

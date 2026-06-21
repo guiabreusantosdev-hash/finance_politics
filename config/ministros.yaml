@@ -1,0 +1,44 @@
+# Conjunto-semente de ministros por governo. Expanda conforme sua pesquisa.
+# 'governo' deve casar com config/mandatos.yaml. 'fim: null' = até o fim do mandato.
+- governo: "Lula 1"
+  ministros:
+    - pasta: "Fazenda"
+      nome: "Antonio Palocci"
+      inicio: 2003-01-01
+      fim: 2006-03-27
+      fonte: "https://pt.wikipedia.org/wiki/Antonio_Palocci"
+- governo: "Lula 2"
+  ministros:
+    - pasta: "Fazenda"
+      nome: "Guido Mantega"
+      inicio: 2006-03-27
+      fim: 2010-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Guido_Mantega"
+- governo: "Dilma 1"
+  ministros:
+    - pasta: "Fazenda"
+      nome: "Guido Mantega"
+      inicio: 2011-01-01
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Guido_Mantega"
+- governo: "Dilma/Temer"
+  ministros:
+    - pasta: "Fazenda"
+      nome: "Henrique Meirelles"
+      inicio: 2016-05-12
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Henrique_Meirelles"
+- governo: "Bolsonaro"
+  ministros:
+    - pasta: "Economia"
+      nome: "Paulo Guedes"
+      inicio: 2019-01-01
+      fim: 2022-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Paulo_Guedes"
+- governo: "Lula 3"
+  ministros:
+    - pasta: "Fazenda"
+      nome: "Fernando Haddad"
+      inicio: 2023-01-01
+      fim: null
+      fonte: "https://pt.wikipedia.org/wiki/Fernando_Haddad"
