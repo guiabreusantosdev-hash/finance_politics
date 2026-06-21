@@ -229,3 +229,7 @@ def _mostrar_resumo(st, conn, client, payload) -> None:  # pragma: no cover
                     ok = reg.veredito.get("ancorado") and reg.veredito.get("neutro")
                     flag = " ✅" if ok else " ⚠️"
                 st.markdown(f"- **{reg.criado_em}** · {reg.modelo}{flag}")
+
+
+if __name__ == "__main__":
+    main()
