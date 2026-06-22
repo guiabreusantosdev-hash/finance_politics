@@ -1,10 +1,19 @@
 """Streamlit UI: five tabs (por período / por mandato / comparação / ministros / legislativo)."""
 from __future__ import annotations
 
-import pandas as pd
-import plotly.graph_objects as go
+import sys
+from pathlib import Path
 
-from app.models import Observacao
+# `streamlit run app/ui.py` coloca a pasta app/ no sys.path, não a raiz do projeto.
+# Garantimos a raiz para que `import app...` funcione independentemente do entrypoint.
+_RAIZ = Path(__file__).resolve().parent.parent
+if str(_RAIZ) not in sys.path:
+    sys.path.insert(0, str(_RAIZ))
+
+import pandas as pd  # noqa: E402
+import plotly.graph_objects as go  # noqa: E402
+
+from app.models import Observacao  # noqa: E402
 
 
 def serie_para_df(obs: list[Observacao]) -> pd.DataFrame:
