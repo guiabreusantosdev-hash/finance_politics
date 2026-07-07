@@ -28,3 +28,14 @@ def agregar_por_tema(conn, leis) -> dict[str, int]:
 
 def agregar_vetos_por_tipo(vetos) -> dict[str, int]:
     return dict(Counter(v.tipo for v in vetos))
+
+
+def filtrar_leis(leis, temas_por_lei, tipos_sel, temas_sel):
+    def ok(lei):
+        if tipos_sel and lei.tipo not in tipos_sel:
+            return False
+        if temas_sel and not (set(temas_por_lei.get(lei.id, [])) & set(temas_sel)):
+            return False
+        return True
+
+    return [lei for lei in leis if ok(lei)]
