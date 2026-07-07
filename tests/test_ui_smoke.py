@@ -65,3 +65,24 @@ def test_ui_aba_por_periodo_usa_slider_e_payload_periodo():
     assert "st.slider" in src
     assert "construir_payload_periodo" in src
     assert "observacoes_entre" in src
+
+
+def test_grafico_barras_usa_bar_e_titulo():
+    from app.ui import grafico_barras
+
+    fig = grafico_barras(_obs(), titulo="PIB", unidade="%", fonte="IBGE")
+    d = fig.to_dict()
+    assert d["data"][0]["type"] == "bar"
+    assert "PIB" in d["layout"]["title"]["text"]
+    assert "IBGE" in d["layout"]["title"]["text"]
+
+
+def test_ui_aba_por_periodo_usa_tipo_grafico_e_aviso_sem_dados():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "tipo_grafico" in src
+    assert "grafico_barras" in src
+    assert "sem dados no período" in src

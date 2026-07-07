@@ -27,9 +27,17 @@ def grafico_serie(obs: list[Observacao], titulo: str, unidade: str, fonte: str) 
     return fig
 
 
+def grafico_barras(obs: list[Observacao], titulo: str, unidade: str, fonte: str) -> go.Figure:
+    df = serie_para_df(obs)
+    fig = go.Figure(go.Bar(x=df["data"], y=df["valor"]))
+    fig.update_layout(title=f"{titulo} ({unidade}) — fonte: {fonte}")
+    return fig
+
+
 def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     import streamlit as st
 
+    from app.calculo import tipo_grafico
     from app.config_loader import carregar_indicadores, carregar_mandatos
     from app.db import conectar, criar_schema, observacoes_da_serie, observacoes_entre
     from app.llm import ClaudeCodeClient
@@ -62,11 +70,14 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         data_fim = _dt.date(ano_fim, 12, 31)
         for ind in indicadores:
             obs = observacoes_entre(conn, ind.id, data_ini, data_fim)
-            if obs:
-                st.plotly_chart(
-                    grafico_serie(obs, ind.nome, ind.unidade, ind.fonte),
-                    width="stretch", key=f"periodo_{ind.id}",
-                )
+            if not obs:
+                st.info(f"{ind.nome}: sem dados no período selecionado")
+                continue
+            fabrica = grafico_barras if tipo_grafico(ind) == "barras" else grafico_serie
+            st.plotly_chart(
+                fabrica(obs, ind.nome, ind.unidade, ind.fonte),
+                width="stretch", key=f"periodo_{ind.id}",
+            )
         payload = construir_payload_periodo(conn, indicadores, int(ano_ini), int(ano_fim))
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload)
 
