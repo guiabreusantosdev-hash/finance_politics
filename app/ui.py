@@ -119,7 +119,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
 
         try:
             ministros = carregar_ministros()
-        except Exception as e:  # noqa: BLE001 - queremos degradar a aba, não a app
+        except Exception as e:  # noqa: BLE001 - captura ampla de propósito: mostra erro e interrompe a renderização
             st.error(f"Falha ao carregar ministros: {e}")
             st.stop()
         nome_g = st.selectbox("Governo", [m.nome for m in mandatos], key="gov_min")
