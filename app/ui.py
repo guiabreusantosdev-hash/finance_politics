@@ -34,6 +34,14 @@ def grafico_barras(obs: list[Observacao], titulo: str, unidade: str, fonte: str)
     return fig
 
 
+def grafico_comparacao_indicador(
+    nome: str, unidade: str, valor_a: float, valor_b: float, rotulo_a: str, rotulo_b: str
+) -> go.Figure:
+    fig = go.Figure(go.Bar(x=[rotulo_a, rotulo_b], y=[valor_a, valor_b]))
+    fig.update_layout(title=f"{nome} ({unidade})")
+    return fig
+
+
 def main() -> None:  # pragma: no cover - exercised by the manual smoke run
     import streamlit as st
 
@@ -104,6 +112,22 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         ma = next(m for m in mandatos if m.nome == a)
         mb = next(m for m in mandatos if m.nome == b)
         payload_c = construir_payload_comparacao(conn, indicadores, ma, mb)
+
+        comparaveis = [
+            d for d in payload_c.deltas if d.valor_a is not None and d.valor_b is not None
+        ]
+        for i in range(0, len(comparaveis), 2):
+            cols = st.columns(2)
+            for col, d in zip(cols, comparaveis[i : i + 2]):
+                col.plotly_chart(
+                    grafico_comparacao_indicador(
+                        d.nome, d.unidade, d.valor_a, d.valor_b,
+                        payload_c.mandato_a, payload_c.mandato_b,
+                    ),
+                    width="stretch",
+                    key=f"comp_{d.nome}",
+                )
+
         st.dataframe(pd.DataFrame([d.model_dump() for d in payload_c.deltas]))
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_c)
 

@@ -103,3 +103,26 @@ def test_ui_legislativo_tem_legenda_e_filtros():
     assert "filtrar_leis" in src
     assert "st.multiselect" in src
     assert "temas_de" in src
+
+
+def test_grafico_comparacao_indicador_tem_duas_barras_e_titulo():
+    from app.ui import grafico_comparacao_indicador
+
+    fig = grafico_comparacao_indicador(
+        "Meta Selic", "% a.a.", 13.75, 10.5, "Bolsonaro", "Lula 3"
+    )
+    d = fig.to_dict()
+    assert d["data"][0]["type"] == "bar"
+    assert list(d["data"][0]["y"]) == [13.75, 10.5]
+    assert list(d["data"][0]["x"]) == ["Bolsonaro", "Lula 3"]
+    assert "Meta Selic" in d["layout"]["title"]["text"]
+    assert "% a.a." in d["layout"]["title"]["text"]
+
+
+def test_ui_aba_comparacao_usa_grafico_por_indicador():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "grafico_comparacao_indicador" in src
