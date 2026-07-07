@@ -35,3 +35,17 @@ def test_indicador_aceita_variavel_e_classificacao_opcionais():
     )
     assert ind2.variavel is None
     assert ind2.classificacao is None
+
+
+def test_indicadores_inclui_selic_efetiva():
+    from app.config_loader import carregar_indicadores
+
+    inds = carregar_indicadores()
+    por_id = {i.id: i for i in inds}
+    assert "bcb_1178_selic_efetiva" in por_id
+    sel = por_id["bcb_1178_selic_efetiva"]
+    assert sel.fonte == "BCB"
+    assert sel.codigo_fonte == "1178"
+    assert sel.periodicidade == "diaria"
+    # a meta continua existindo, lado a lado
+    assert "bcb_432_selic" in por_id

@@ -7,6 +7,14 @@
   periodicidade: diaria
   eixo: macro
   metodo_anual: fim_periodo
+- id: bcb_1178_selic_efetiva
+  fonte: BCB
+  codigo_fonte: "1178"
+  nome: Selic efetiva (anualizada)
+  unidade: "% a.a."
+  periodicidade: diaria
+  eixo: macro
+  metodo_anual: fim_periodo
 - id: bcb_433_ipca
   fonte: BCB
   codigo_fonte: "433"
