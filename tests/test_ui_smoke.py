@@ -126,3 +126,16 @@ def test_ui_aba_comparacao_usa_grafico_por_indicador():
 
     src = inspect.getsource(ui)
     assert "grafico_comparacao_indicador" in src
+
+
+def test_ui_ministros_tem_expander_pastas_e_msg_medidas():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    assert "carregar_pastas" in src
+    assert "O que faz cada pasta" in src
+    # a mensagem de medidas vazias virou explicativa e cita o botao de IA
+    assert "Sugerir medidas (IA)" in src
+    assert "Nenhuma medida aprovada ainda" in src

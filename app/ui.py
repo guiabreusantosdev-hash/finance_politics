@@ -139,6 +139,7 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         )
         from app.medidas_ia import rascunhar_medidas
         from app.ministros import carregar_ministros, ministros_do_governo
+        from app.pastas import carregar_pastas
         from app.payload import construir_payload_ministerial
 
         try:
@@ -157,6 +158,13 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             for m in do_gov
         ]))
 
+        descricoes = carregar_pastas()
+        with st.expander("O que faz cada pasta"):
+            for pasta in sorted({m.pasta for m in do_gov}):
+                desc = descricoes.get(pasta)
+                if desc:
+                    st.markdown(f"**{pasta}** — {desc}")
+
         st.subheader("Medidas aprovadas")
         aprovadas = medidas_do_governo(conn, nome_g, apenas_aprovadas=True)
         if aprovadas:
@@ -166,7 +174,10 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
                 for m in aprovadas
             ]))
         else:
-            st.caption("Nenhuma medida aprovada ainda.")
+            st.info(
+                "Nenhuma medida aprovada ainda. Use **Sugerir medidas (IA)** abaixo para "
+                "gerar rascunhos com fonte e aprovar os que quiser — eles aparecerão aqui."
+            )
 
         st.subheader("Sugerir medidas (IA)")
         nomes_min = [f"{m.pasta} — {m.nome}" for m in do_gov]
