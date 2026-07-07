@@ -53,3 +53,18 @@ def test_variacao_percentual():
     assert variacao(100.0, 110.0) == 10.0
     assert variacao(None, 110.0) is None
     assert variacao(0.0, 5.0) is None  # evita divisão por zero
+
+
+from app.calculo import tipo_grafico
+
+
+def test_tipo_grafico_anual_vira_barras():
+    assert tipo_grafico(_ind("fim_periodo", "anual")) == "barras"
+
+
+def test_tipo_grafico_mensal_vira_linha():
+    assert tipo_grafico(_ind("media", "mensal")) == "linha"
+
+
+def test_tipo_grafico_diaria_vira_linha():
+    assert tipo_grafico(_ind("fim_periodo", "diaria")) == "linha"

@@ -42,3 +42,8 @@ def valor_no_mandato(
 ) -> float | None:
     ano = mandato.inicio.year if ponta == "inicio" else mandato.fim.year
     return valor_no_periodo(obs, ind, ano)
+
+
+def tipo_grafico(ind: Indicador) -> str:
+    """Séries anuais têm poucos pontos; barras evitam o 'ponto solto' de uma linha."""
+    return "barras" if ind.periodicidade == "anual" else "linha"
