@@ -174,12 +174,26 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         _mostrar_resumo(st, conn, ClaudeCodeClient(), payload_min)
 
     with aba_leg:
-        from app.legislativo import leis_no_mandato, vetos_no_mandato
+        from app.db import temas_de
+        from app.legislativo import (
+            filtrar_leis,
+            leis_no_mandato,
+            vetos_no_mandato,
+        )
         from app.payload import construir_payload_legislativo
 
         nome_l = st.selectbox("Mandato", [m.nome for m in mandatos], key="mand_leg")
         mandato_l = next(m for m in mandatos if m.nome == nome_l)
         payload_l = construir_payload_legislativo(conn, mandato_l)
+
+        with st.expander("O que significam EC, LC, LO e MP?"):
+            st.markdown(
+                "- **EC** — Emenda Constitucional (altera a Constituição; quórum de 3/5).\n"
+                "- **LC** — Lei Complementar (regula matéria que a Constituição exige; maioria absoluta).\n"
+                "- **LO** — Lei Ordinária (lei comum; maioria simples).\n"
+                "- **MP** — Medida Provisória (editada pelo Executivo com força de lei imediata; "
+                "precisa ser convertida em lei pelo Congresso)."
+            )
 
         c1, c2 = st.columns(2)
         c1.metric("Leis sancionadas", payload_l.total_leis)
@@ -194,10 +208,25 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             ).set_index("tema"))
 
         st.subheader("Leis")
-        st.dataframe(pd.DataFrame([
-            {"tipo": x.tipo, "número": x.numero, "data": x.data, "ementa": x.ementa, "url": x.url}
-            for x in leis_no_mandato(conn, mandato_l)
-        ]))
+        leis = leis_no_mandato(conn, mandato_l)
+        temas_por_lei = {x.id: temas_de(conn, x.id) for x in leis}
+        tipos_sel = st.multiselect("Tipo", ["EC", "LC", "LO", "MP"], key="filtro_tipo")
+        temas_sel = st.multiselect(
+            "Tema", sorted(payload_l.por_tema.keys()), key="filtro_tema"
+        )
+        leis_f = filtrar_leis(leis, temas_por_lei, tipos_sel, temas_sel)
+        if leis_f:
+            st.dataframe(pd.DataFrame([
+                {
+                    "tipo": x.tipo, "número": x.numero, "data": x.data,
+                    "temas": ", ".join(temas_por_lei.get(x.id, [])),
+                    "ementa": x.ementa, "url": x.url,
+                }
+                for x in leis_f
+            ]))
+        else:
+            st.info("Nenhuma lei para os filtros selecionados.")
+
         st.subheader("Vetos")
         st.dataframe(pd.DataFrame([
             {"data": v.data, "tipo": v.tipo, "matéria": v.materia, "descrição": v.descricao}

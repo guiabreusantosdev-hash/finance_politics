@@ -86,3 +86,20 @@ def test_ui_aba_por_periodo_usa_tipo_grafico_e_aviso_sem_dados():
     assert "tipo_grafico" in src
     assert "grafico_barras" in src
     assert "sem dados no período" in src
+
+
+def test_ui_legislativo_tem_legenda_e_filtros():
+    import inspect
+
+    import app.ui as ui
+
+    src = inspect.getsource(ui)
+    # legenda dos tipos
+    assert "Emenda Constitucional" in src
+    assert "Lei Complementar" in src
+    assert "Lei Ordinária" in src
+    assert "Medida Provisória" in src
+    # filtros e temas
+    assert "filtrar_leis" in src
+    assert "st.multiselect" in src
+    assert "temas_de" in src
