@@ -2,7 +2,7 @@ import datetime
 
 from typing import Literal
 
-from app.calculo import valor_no_periodo, variacao
+from app.calculo import tipo_grafico, valor_no_periodo, variacao
 from app.models import Indicador, Observacao
 
 
@@ -53,9 +53,6 @@ def test_variacao_percentual():
     assert variacao(100.0, 110.0) == 10.0
     assert variacao(None, 110.0) is None
     assert variacao(0.0, 5.0) is None  # evita divisão por zero
-
-
-from app.calculo import tipo_grafico
 
 
 def test_tipo_grafico_anual_vira_barras():
