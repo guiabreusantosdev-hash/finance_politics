@@ -158,7 +158,10 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
             for m in do_gov
         ]))
 
-        descricoes = carregar_pastas()
+        try:
+            descricoes = carregar_pastas()
+        except Exception:  # noqa: BLE001 - descrição das pastas é opcional; não derruba a aba
+            descricoes = {}
         with st.expander("O que faz cada pasta"):
             for pasta in sorted({m.pasta for m in do_gov}):
                 desc = descricoes.get(pasta)
