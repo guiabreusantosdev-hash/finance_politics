@@ -7,6 +7,46 @@
       inicio: 2003-01-01
       fim: 2006-03-27
       fonte: "https://pt.wikipedia.org/wiki/Antonio_Palocci"
+    - pasta: "Educação"
+      nome: "Cristovam Buarque"
+      inicio: 2003-01-01
+      fim: 2004-01-27
+      fonte: "https://pt.wikipedia.org/wiki/Cristovam_Buarque"
+    - pasta: "Educação"
+      nome: "Tarso Genro"
+      inicio: 2004-01-27
+      fim: 2005-07-29
+      fonte: "https://pt.wikipedia.org/wiki/Tarso_Genro"
+    - pasta: "Educação"
+      nome: "Fernando Haddad"
+      inicio: 2005-07-29
+      fim: 2006-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Fernando_Haddad"
+    - pasta: "Casa Civil"
+      nome: "José Dirceu"
+      inicio: 2003-01-01
+      fim: 2005-06-21
+      fonte: "https://pt.wikipedia.org/wiki/José_Dirceu"
+    - pasta: "Casa Civil"
+      nome: "Dilma Rousseff"
+      inicio: 2005-06-21
+      fim: 2006-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Dilma_Rousseff"
+    - pasta: "Relações Exteriores"
+      nome: "Celso Amorim"
+      inicio: 2003-01-01
+      fim: 2006-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Celso_Amorim"
+    - pasta: "Justiça"
+      nome: "Márcio Thomaz Bastos"
+      inicio: 2003-01-01
+      fim: 2006-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Márcio_Thomaz_Bastos"
+    - pasta: "Secretaria-Geral"
+      nome: "Luiz Dulci"
+      inicio: 2003-01-01
+      fim: 2006-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Dulci"
 - governo: "Lula 2"
   ministros:
     - pasta: "Fazenda"
@@ -14,6 +54,46 @@
       inicio: 2006-03-27
       fim: 2010-12-31
       fonte: "https://pt.wikipedia.org/wiki/Guido_Mantega"
+    - pasta: "Educação"
+      nome: "Fernando Haddad"
+      inicio: 2007-01-01
+      fim: 2010-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Fernando_Haddad"
+    - pasta: "Casa Civil"
+      nome: "Dilma Rousseff"
+      inicio: 2007-01-01
+      fim: 2010-03-31
+      fonte: "https://pt.wikipedia.org/wiki/Dilma_Rousseff"
+    - pasta: "Casa Civil"
+      nome: "Erenice Guerra"
+      inicio: 2010-03-31
+      fim: 2010-09-16
+      fonte: "https://pt.wikipedia.org/wiki/Erenice_Guerra"
+    - pasta: "Relações Exteriores"
+      nome: "Celso Amorim"
+      inicio: 2007-01-01
+      fim: 2010-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Celso_Amorim"
+    - pasta: "Justiça"
+      nome: "Márcio Thomaz Bastos"
+      inicio: 2007-01-01
+      fim: 2007-03-16
+      fonte: "https://pt.wikipedia.org/wiki/Márcio_Thomaz_Bastos"
+    - pasta: "Justiça"
+      nome: "Tarso Genro"
+      inicio: 2007-03-16
+      fim: 2010-02-10
+      fonte: "https://pt.wikipedia.org/wiki/Tarso_Genro"
+    - pasta: "Justiça"
+      nome: "Luiz Paulo Barreto"
+      inicio: 2010-02-10
+      fim: 2010-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Paulo_Barreto"
+    - pasta: "Secretaria-Geral"
+      nome: "Luiz Dulci"
+      inicio: 2007-01-01
+      fim: 2010-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Dulci"
 - governo: "Dilma 1"
   ministros:
     - pasta: "Fazenda"
@@ -21,6 +101,56 @@
       inicio: 2011-01-01
       fim: 2014-12-31
       fonte: "https://pt.wikipedia.org/wiki/Guido_Mantega"
+    - pasta: "Educação"
+      nome: "Fernando Haddad"
+      inicio: 2011-01-01
+      fim: 2012-01-23
+      fonte: "https://pt.wikipedia.org/wiki/Fernando_Haddad"
+    - pasta: "Educação"
+      nome: "Aloizio Mercadante"
+      inicio: 2012-01-24
+      fim: 2014-02-03
+      fonte: "https://pt.wikipedia.org/wiki/Aloizio_Mercadante"
+    - pasta: "Educação"
+      nome: "José Henrique Paim"
+      inicio: 2014-02-03
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/José_Henrique_Paim"
+    - pasta: "Casa Civil"
+      nome: "Antonio Palocci"
+      inicio: 2011-01-01
+      fim: 2011-06-07
+      fonte: "https://pt.wikipedia.org/wiki/Antonio_Palocci"
+    - pasta: "Casa Civil"
+      nome: "Gleisi Hoffmann"
+      inicio: 2011-06-08
+      fim: 2014-02-02
+      fonte: "https://pt.wikipedia.org/wiki/Gleisi_Hoffmann"
+    - pasta: "Casa Civil"
+      nome: "Aloizio Mercadante"
+      inicio: 2014-02-03
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Aloizio_Mercadante"
+    - pasta: "Relações Exteriores"
+      nome: "Antonio Patriota"
+      inicio: 2011-01-01
+      fim: 2013-08-26
+      fonte: "https://pt.wikipedia.org/wiki/Antonio_de_Aguiar_Patriota"
+    - pasta: "Relações Exteriores"
+      nome: "Luiz Alberto Figueiredo Machado"
+      inicio: 2013-08-28
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Alberto_Figueiredo_Machado"
+    - pasta: "Justiça"
+      nome: "José Eduardo Cardozo"
+      inicio: 2011-01-01
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/José_Eduardo_Cardozo"
+    - pasta: "Secretaria-Geral"
+      nome: "Gilberto Carvalho"
+      inicio: 2011-01-01
+      fim: 2014-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Gilberto_Carvalho"
 - governo: "Dilma/Temer"
   ministros:
     - pasta: "Fazenda"
@@ -28,6 +158,56 @@
       inicio: 2016-05-12
       fim: 2018-12-31
       fonte: "https://pt.wikipedia.org/wiki/Henrique_Meirelles"
+    - pasta: "Educação"
+      nome: "Mendonça Filho"
+      inicio: 2016-05-12
+      fim: 2018-04-06
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Educação"
+      nome: "Rossieli Soares"
+      inicio: 2018-04-10
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Casa Civil"
+      nome: "Eliseu Padilha"
+      inicio: 2016-05-12
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_ministros-chefe_da_Casa_Civil_do_Brasil"
+    - pasta: "Relações Exteriores"
+      nome: "José Serra"
+      inicio: 2016-05-12
+      fim: 2017-02-22
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Relações Exteriores"
+      nome: "Aloysio Nunes"
+      inicio: 2017-03-07
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Justiça"
+      nome: "Alexandre de Moraes"
+      inicio: 2016-05-12
+      fim: 2017-02-22
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Justiça"
+      nome: "Osmar Serraglio"
+      inicio: 2017-03-07
+      fim: 2017-05-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Justiça"
+      nome: "Torquato Jardim"
+      inicio: 2017-05-31
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
+    - pasta: "Secretaria-Geral"
+      nome: "Moreira Franco"
+      inicio: 2017-02-03
+      fim: 2018-04-06
+      fonte: "https://pt.wikipedia.org/wiki/Wellington_Moreira_Franco"
+    - pasta: "Secretaria-Geral"
+      nome: "Ronaldo Fonseca"
+      inicio: 2018-05-28
+      fim: 2018-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_membros_do_gabinete_de_Michel_Temer"
 - governo: "Bolsonaro"
   ministros:
     - pasta: "Economia"
@@ -35,6 +215,96 @@
       inicio: 2019-01-01
       fim: 2022-12-31
       fonte: "https://pt.wikipedia.org/wiki/Paulo_Guedes"
+    - pasta: "Educação"
+      nome: "Ricardo Vélez Rodríguez"
+      inicio: 2019-01-01
+      fim: 2019-04-08
+      fonte: "https://pt.wikipedia.org/wiki/Ricardo_Vélez_Rodríguez"
+    - pasta: "Educação"
+      nome: "Abraham Weintraub"
+      inicio: 2019-04-08
+      fim: 2020-06-20
+      fonte: "https://pt.wikipedia.org/wiki/Abraham_Weintraub"
+    - pasta: "Educação"
+      nome: "Milton Ribeiro"
+      inicio: 2020-07-16
+      fim: 2022-03-28
+      fonte: "https://pt.wikipedia.org/wiki/Milton_Ribeiro_(pastor)"
+    - pasta: "Educação"
+      nome: "Victor Godoy Veiga"
+      inicio: 2022-03-29
+      fim: 2022-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Victor_Godoy_Veiga"
+    - pasta: "Casa Civil"
+      nome: "Onyx Lorenzoni"
+      inicio: 2019-01-01
+      fim: 2020-02-18
+      fonte: "https://pt.wikipedia.org/wiki/Lista_de_ministros-chefe_da_Casa_Civil_do_Brasil"
+    - pasta: "Casa Civil"
+      nome: "Walter Braga Netto"
+      inicio: 2020-02-18
+      fim: 2021-03-29
+      fonte: "https://pt.wikipedia.org/wiki/Walter_Braga_Netto"
+    - pasta: "Casa Civil"
+      nome: "Luiz Eduardo Ramos"
+      inicio: 2021-03-29
+      fim: 2021-07-28
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Eduardo_Ramos"
+    - pasta: "Casa Civil"
+      nome: "Ciro Nogueira"
+      inicio: 2021-08-04
+      fim: 2022-12-30
+      fonte: "https://pt.wikipedia.org/wiki/Ciro_Nogueira"
+    - pasta: "Relações Exteriores"
+      nome: "Ernesto Araújo"
+      inicio: 2019-01-01
+      fim: 2021-03-29
+      fonte: "https://pt.wikipedia.org/wiki/Ernesto_Araújo"
+    - pasta: "Relações Exteriores"
+      nome: "Carlos França"
+      inicio: 2021-04-06
+      fim: 2022-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Carlos_Alberto_Franco_França"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "Sergio Moro"
+      inicio: 2019-01-01
+      fim: 2020-04-24
+      fonte: "https://pt.wikipedia.org/wiki/Sergio_Moro"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "André Mendonça"
+      inicio: 2020-04-29
+      fim: 2021-03-29
+      fonte: "https://pt.wikipedia.org/wiki/André_Mendonça"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "Anderson Torres"
+      inicio: 2021-03-30
+      fim: 2022-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Anderson_Torres"
+    - pasta: "Secretaria-Geral"
+      nome: "Gustavo Bebianno"
+      inicio: 2019-01-01
+      fim: 2019-02-18
+      fonte: "https://pt.wikipedia.org/wiki/Gustavo_Bebianno"
+    - pasta: "Secretaria-Geral"
+      nome: "Floriano Peixoto Vieira Neto"
+      inicio: 2019-02-18
+      fim: 2019-06-20
+      fonte: "https://pt.wikipedia.org/wiki/Floriano_Peixoto_Vieira_Neto"
+    - pasta: "Secretaria-Geral"
+      nome: "Jorge Oliveira"
+      inicio: 2019-06-21
+      fim: 2020-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Jorge_Oliveira"
+    - pasta: "Secretaria-Geral"
+      nome: "Onyx Lorenzoni"
+      inicio: 2021-02-12
+      fim: 2021-07-28
+      fonte: "https://pt.wikipedia.org/wiki/Onyx_Lorenzoni"
+    - pasta: "Secretaria-Geral"
+      nome: "Luiz Eduardo Ramos"
+      inicio: 2021-07-28
+      fim: 2022-12-31
+      fonte: "https://pt.wikipedia.org/wiki/Luiz_Eduardo_Ramos"
 - governo: "Lula 3"
   ministros:
     - pasta: "Fazenda"
@@ -42,3 +312,53 @@
       inicio: 2023-01-01
       fim: null
       fonte: "https://pt.wikipedia.org/wiki/Fernando_Haddad"
+    - pasta: "Educação"
+      nome: "Camilo Santana"
+      inicio: 2023-01-01
+      fim: 2026-04-02
+      fonte: "https://pt.wikipedia.org/wiki/Camilo_Santana"
+    - pasta: "Educação"
+      nome: "Leonardo Barchini"
+      inicio: 2026-04-02
+      fim: null
+      fonte: "https://agenciabrasil.ebc.com.br/politica/noticia/2026-03/leonardo-barchini-sera-o-novo-ministro-da-educacao-anuncia-lula"
+    - pasta: "Casa Civil"
+      nome: "Rui Costa"
+      inicio: 2023-01-01
+      fim: 2026-04-02
+      fonte: "https://pt.wikipedia.org/wiki/Rui_Costa_(político)"
+    - pasta: "Casa Civil"
+      nome: "Miriam Belchior"
+      inicio: 2026-04-02
+      fim: null
+      fonte: "https://pt.wikipedia.org/wiki/Miriam_Belchior"
+    - pasta: "Relações Exteriores"
+      nome: "Mauro Vieira"
+      inicio: 2023-01-01
+      fim: null
+      fonte: "https://pt.wikipedia.org/wiki/Mauro_Vieira"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "Flávio Dino"
+      inicio: 2023-01-01
+      fim: 2024-02-01
+      fonte: "https://pt.wikipedia.org/wiki/Flávio_Dino"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "Ricardo Lewandowski"
+      inicio: 2024-02-01
+      fim: 2026-01-09
+      fonte: "https://pt.wikipedia.org/wiki/Ricardo_Lewandowski"
+    - pasta: "Justiça e Segurança Pública"
+      nome: "Wellington César Lima e Silva"
+      inicio: 2026-01-15
+      fim: null
+      fonte: "https://pt.wikipedia.org/wiki/Wellington_César_Lima_e_Silva"
+    - pasta: "Secretaria-Geral"
+      nome: "Márcio Macêdo"
+      inicio: 2023-01-01
+      fim: 2025-10-29
+      fonte: "https://pt.wikipedia.org/wiki/Secretaria-Geral_da_Presidência_da_República"
+    - pasta: "Secretaria-Geral"
+      nome: "Guilherme Boulos"
+      inicio: 2025-10-29
+      fim: null
+      fonte: "https://agenciagov.ebc.com.br/noticias/202510/guilherme-boulos-assume-secretaria-geral-da-presidencia-em-lugar-de-marcio-macedo"

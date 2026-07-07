@@ -117,7 +117,11 @@ def main() -> None:  # pragma: no cover - exercised by the manual smoke run
         from app.ministros import carregar_ministros, ministros_do_governo
         from app.payload import construir_payload_ministerial
 
-        ministros = carregar_ministros()
+        try:
+            ministros = carregar_ministros()
+        except Exception as e:  # noqa: BLE001 - queremos degradar a aba, não a app
+            st.error(f"Falha ao carregar ministros: {e}")
+            st.stop()
         nome_g = st.selectbox("Governo", [m.nome for m in mandatos], key="gov_min")
         mandato_g = next(m for m in mandatos if m.nome == nome_g)
         do_gov = ministros_do_governo(ministros, nome_g)

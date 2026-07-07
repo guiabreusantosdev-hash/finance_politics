@@ -57,3 +57,16 @@ def test_ministros_do_governo_filtra():
     b = Ministro(governo="Bolsonaro", pasta="Economia", nome="B",
                  inicio=datetime.date(2019, 1, 1), fim=None, fonte="x")
     assert ministros_do_governo([a, b], "Lula 3") == [a]
+
+
+def test_config_real_tem_pastas_esperadas_por_governo():
+    ms = carregar_ministros("config/ministros.yaml", "config/mandatos.yaml")
+    esperadas = {
+        "Educação", "Casa Civil", "Relações Exteriores", "Secretaria-Geral",
+    }
+    for governo in ["Lula 1", "Lula 2", "Dilma 1", "Dilma/Temer", "Bolsonaro", "Lula 3"]:
+        pastas = {m.pasta for m in ministros_do_governo(ms, governo)}
+        faltando = esperadas - pastas
+        assert not faltando, f"{governo} sem pastas: {faltando}"
+        # Justiça aparece com um dos dois nomes conforme a época
+        assert any("Justiça" in p for p in pastas), f"{governo} sem pasta de Justiça"
